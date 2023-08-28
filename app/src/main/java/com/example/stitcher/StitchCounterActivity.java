@@ -18,9 +18,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.stitcher.controllers.Database;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.w3c.dom.Text;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 public class StitchCounterActivity extends AppCompatActivity {
     private TextView countText;
@@ -63,6 +67,22 @@ public class StitchCounterActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+
+        Database db = new Database();
+
+        CompletableFuture.runAsync(() -> {
+            db.test_function()
+                    .thenAccept(result -> {
+                        System.out.println(result);
+                    })
+                    .exceptionally(new Function<Throwable, Void>() {
+                        @Override
+                        public Void apply(Throwable throwable) {
+                            System.out.println(throwable);
+                            return null;
+                        }
+                    });
         });
     }
 

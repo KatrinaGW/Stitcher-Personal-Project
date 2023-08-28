@@ -36,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         stitchCounterButton = findViewById(R.id.stitch_counter_btn);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
 
         stitchCounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
