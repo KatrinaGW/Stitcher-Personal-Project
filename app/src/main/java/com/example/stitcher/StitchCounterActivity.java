@@ -1,27 +1,20 @@
 package com.example.stitcher;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.stitcher.controllers.Database;
+import com.example.stitcher.controllers.CounterCollection;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.w3c.dom.Text;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -69,21 +62,7 @@ public class StitchCounterActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        Database db = new Database();
-
-        CompletableFuture.runAsync(() -> {
-            db.test_function()
-                    .thenAccept(result -> {
-                        System.out.println(result);
-                    })
-                    .exceptionally(new Function<Throwable, Void>() {
-                        @Override
-                        public Void apply(Throwable throwable) {
-                            System.out.println(throwable);
-                            return null;
-                        }
-                    });
-        });
+        CounterCollection db = new CounterCollection();
     }
 
     private void onBackClicked(){
