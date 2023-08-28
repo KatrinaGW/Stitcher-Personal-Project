@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "4260592296",
+    "project_id": "stitcher-e4080",
+    "storage_bucket": "stitcher-e4080.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4260592296:android:d1c9bf4f1daca04b34e09d",
+        "android_client_info": {
+          "package_name": "com.example.stitcher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "4260592296-1jk0ffuajmga82t1klj9eqvqcfmsb3md.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzZNTHJL4ysoTTS-tQaFMLgYTebre0Tag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "4260592296-1jk0ffuajmga82t1klj9eqvqcfmsb3md.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
