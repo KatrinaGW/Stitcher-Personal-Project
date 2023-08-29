@@ -21,6 +21,6 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:text="Stitch Counter" />
+        android:text="New Counter" />
 
 </RelativeLayout>

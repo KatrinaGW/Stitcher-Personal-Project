@@ -9,12 +9,17 @@ import androidx.annotation.NonNull;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.DatabaseObject;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class CounterCollection implements Database{
@@ -22,6 +27,73 @@ public class CounterCollection implements Database{
 
     public CounterCollection(){
         db = FirebaseFirestore.getInstance();
+    }
+
+    @Override
+    public CompletableFuture<Boolean> updateRecord(String id, DatabaseObject obj){
+        Counter counter = (Counter) obj;
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+        ArrayList<String> errors = new ArrayList<>();
+
+        DocumentReference documentReference = this.db.collection(Constants.COUNTER_COLLECTION.getValue())
+                .document(counter.getId());
+
+        CompletableFuture futureCount = CompletableFuture.supplyAsync(()->
+                documentReference.update(Constants.COUNTER_COUNT_FIELD.getValue(), counter.getCount())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                errors.add(e.getMessage());
+                            }
+                        })
+        );
+
+        CompletableFuture futureGoal = CompletableFuture.supplyAsync(()->
+                documentReference.update(Constants.COUNTER_GOAL_FIELD.getValue(), counter.getGoal())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                errors.add(e.getMessage());
+                            }
+                        })
+        );
+
+        CompletableFuture futureName = CompletableFuture.supplyAsync(()->
+                documentReference.update(Constants.COUNTER_NAME_FIELD.getValue(), counter.getName())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                errors.add(e.getMessage());
+                            }
+                        })
+        );
+
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureCount, futureGoal, futureName);
+
+        allFutures.thenRun(() -> {
+            System.out.println("Finished");
+            cf.complete(errors.size()==0);
+        });
+
+        return cf;
     }
 
     @Override
@@ -53,6 +125,61 @@ public class CounterCollection implements Database{
                         }
                     });
         });
+
+        return cf;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> insertRecord(String id, DatabaseObject obj){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+        Counter counter = (Counter) obj;
+
+        Map<String, Object> counterMap = new HashMap<>();
+        counterMap.put("id", counter.getId());
+        counterMap.put(Constants.COUNTER_COUNT_FIELD.getValue(), counter.getCount());
+        counterMap.put(Constants.COUNTER_GOAL_FIELD.getValue(), counter.getGoal());
+        counterMap.put(Constants.COUNTER_NAME_FIELD.getValue(), counter.getName());
+
+        db.collection(Constants.COUNTER_COLLECTION.getValue()).document(counter.getId())
+                .set(counterMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        cf.complete(true);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                        cf.complete(false);
+                    }
+                });
+        return cf;
+    }
+
+    public CompletableFuture<Boolean> deleteRecord(String id){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        db.collection(Constants.COUNTER_COLLECTION.getValue())
+                .document(id)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(TAG, "Document successfully deleted");
+                        cf.complete(true);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Document failed to delete");
+                        Log.e(TAG, e.getMessage());
+                        cf.completeExceptionally(e);
+                    }
+                });
 
         return cf;
     }

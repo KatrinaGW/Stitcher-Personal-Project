@@ -1,12 +1,17 @@
 package com.example.stitcher;
 
+import static android.content.ContentValues.TAG;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,10 +32,14 @@ public class StitchCounterActivity extends AppCompatActivity {
     private Button subtractBtn;
     private Button backBtn;
     private TextView negativeErrorTxt;
+    private TextView savedTxt;
     private EditText goalCounterValue;
     private EditText counterNameValue;
+    private Button saveBtn;
+    private Button deleteBtn;
 
     private Counter counter;
+    private boolean isNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +49,9 @@ public class StitchCounterActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         counter = intent.getParcelableExtra("selectedCounter");
-        if(counter == null){
-            counter = new Counter(UUID.randomUUID().toString(), 0, 0, "Testing");
+        isNew = counter == null;
+        if(isNew){
+            counter = new Counter(UUID.randomUUID().toString(), 0, 0, "");
         }
     }
 
@@ -64,7 +74,13 @@ public class StitchCounterActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String newText = charSequence.toString();
-                counter.setGoal(Integer.parseInt(newText));
+
+                if(!newText.equals("")){
+                    counter.setGoal(Integer.parseInt(newText));
+                }else{
+                    counter.setGoal(0);
+                }
+
 
                 setCountText();
             }
@@ -79,14 +95,103 @@ public class StitchCounterActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String newText = charSequence.toString();
+                System.out.println(newText);
                 counter.setName(newText);
-
-                setNameText();
             }
 
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CounterCollection counterCollectionConnection = new CounterCollection();
+                counterCollectionConnection.deleteRecord(counter.getId())
+                        .thenAccept(success -> {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    System.out.println(success);
+                                    startActivity(new Intent(StitchCounterActivity.this, MainActivity.class));
+                                }
+                            });
+                        })
+                        .exceptionally(new Function<Throwable, Void>() {
+                            @Override
+                            public Void apply(Throwable throwable) {
+                                System.out.println(throwable.getMessage());
+                                return null;
+                            }
+                        });
+            }
+        });
+
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CounterCollection counterCollectionConnection = new CounterCollection();
+                if(verifyInput()){
+                    if(!isNew){
+                        counterCollectionConnection.updateRecord(counter.getId(), counter)
+                                .thenAccept(success -> {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            System.out.println(success);
+                                            closeKeyboardIfOpen();
+                                            showSavedMsg();
+                                        }
+                                    });
+                                })
+                                .exceptionally(new Function<Throwable, Void>() {
+                                    @Override
+                                    public Void apply(Throwable throwable) {
+                                        System.out.println(throwable.getMessage());
+                                        return null;
+                                    }
+                                });
+                    }else{
+                        counterCollectionConnection.insertRecord(counter.getId(), counter)
+                                .thenAccept(success -> {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            System.out.println(success);
+                                            closeKeyboardIfOpen();
+                                            showSavedMsg();
+                                        }
+                                    });
+                                })
+                                .exceptionally(new Function<Throwable, Void>() {
+                                    @Override
+                                    public Void apply(Throwable throwable) {
+                                        Log.w(TAG, throwable.getMessage());
+                                        return null;
+                                    }
+                                });
+                    }
+                }else{
+                    closeKeyboardIfOpen();
+
+                    showError(R.string.no_name_error);
+                }
+
+            }
+        });
+    }
+
+    private void closeKeyboardIfOpen(){
+        View view = getCurrentFocus();
+
+        if(view != null){
+            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
+    private boolean verifyInput(){
+        return !counter.getName().equals("");
     }
 
     private void setTexts(){
@@ -103,13 +208,19 @@ public class StitchCounterActivity extends AppCompatActivity {
         backBtn = findViewById(R.id.counter_back_btn);
         goalCounterValue = findViewById(R.id.counter_goal_value);
         counterNameValue = findViewById(R.id.counter_label_value);
+        saveBtn = findViewById(R.id.counter_save_btn);
+        deleteBtn = findViewById(R.id.counter_delete_btn);
+        savedTxt = findViewById(R.id.saved_txt);
+
+        deleteBtn.setVisibility(isNew ? View.GONE : View.VISIBLE);
     }
 
     private void onBackClicked(){
         startActivity(new Intent(StitchCounterActivity.this, MainActivity.class));
     }
 
-    private void showError(){
+    private void showError(int messageId){
+        negativeErrorTxt.setText(messageId);
         negativeErrorTxt.setVisibility(View.VISIBLE);
 
         Handler handler = new Handler();
@@ -121,9 +232,21 @@ public class StitchCounterActivity extends AppCompatActivity {
         }, 3000);
     }
 
+    private void showSavedMsg(){
+        savedTxt.setVisibility(View.VISIBLE);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                savedTxt.setVisibility(View.GONE);
+            }
+        }, 3000);
+    }
+
     private void onChangeCount(int addend){
         if(counter.getCount()+addend < 0){
-            showError();
+            showError(R.string.negative_count_error);
         }else{
             counter.addToCount(addend);
             setCountText();
@@ -134,10 +257,6 @@ public class StitchCounterActivity extends AppCompatActivity {
     private void setCountText(){
         countText.setText(Integer.toString(counter.getCount()));
         checkCount();
-    }
-
-    private void setNameText(){
-        counterNameValue.setText(counter.getName());
     }
 
     private void checkCount(){

@@ -11,8 +11,10 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="stitch_counter">Stitch Counter</string>
     <string name="negative_count_error">Cannot have negative count!</string>
+    <string name="no_name_error">Please enter a name!</string>
     <string name="goal_count_label">Goal Count:</string>
     <string name="subtract">Subtract</string>
     <string name="add">Add</string>
     <string name="counter_label_txt">Counter Label:</string>
+    <string name="saved_msg_text">Saved!</string>
 </resources>
