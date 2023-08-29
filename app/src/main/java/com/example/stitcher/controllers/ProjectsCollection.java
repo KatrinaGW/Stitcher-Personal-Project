@@ -11,8 +11,11 @@ import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.DatabaseObject;
 import com.example.stitcher.models.Project;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -65,9 +68,93 @@ public class ProjectsCollection implements Database{
         return cf;
     }
 
+    public CompletableFuture<Boolean> updateCounterIds(String id, ArrayList<String> ids){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
+            collection.document(id)
+                    .update(Constants.PROJECT_COUNTERS_FIELD.getValue(), ids.toArray())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            cf.complete(true);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            cf.completeExceptionally(e);
+                        }
+                    });
+        });
+
+        return cf;
+    }
+
     @Override
-    public CompletableFuture<Boolean> updateRecord(String id, DatabaseObject obj) {
-        return null;
+    public CompletableFuture<Boolean> updateRecord(String id, DatabaseObject obj){
+        Project project = (Project) obj;
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+        ArrayList<String> errors = new ArrayList<>();
+
+        DocumentReference documentReference = collection.document(project.getId());
+
+        CompletableFuture futureCounters = CompletableFuture.supplyAsync(()->
+                documentReference.update(Constants.PROJECT_COUNTERS_FIELD.getValue(), project.getCounterIds().toArray())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                errors.add(e.getMessage());
+                            }
+                        })
+        );
+
+        CompletableFuture futureUrls = CompletableFuture.supplyAsync(()->
+                documentReference.update(Constants.PROJECT_URLS_FIELD.getValue(), project.getUrlIds().toArray())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                errors.add(e.getMessage());
+                            }
+                        })
+        );
+
+        CompletableFuture futureName = CompletableFuture.supplyAsync(()->
+                documentReference.update(Constants.PROJECT_NAME_FIELD.getValue(), project.getName())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                errors.add(e.getMessage());
+                            }
+                        })
+        );
+
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureCounters, futureUrls, futureName);
+
+        allFutures.thenRun(() -> {
+            System.out.println("Finished");
+            cf.complete(errors.size()==0);
+        });
+
+        return cf;
     }
 
     @Override

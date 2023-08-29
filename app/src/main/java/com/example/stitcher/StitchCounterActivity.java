@@ -180,25 +180,6 @@ public class StitchCounterActivity extends AppCompatActivity {
                                     }
                                 });
 
-
-//                        counterCollectionConnection.insertRecord(counter.getId(), counter)
-//                                .thenAccept(success -> {
-//                                    runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            System.out.println(success);
-//                                            closeKeyboardIfOpen();
-//                                            showSavedMsg();
-//                                        }
-//                                    });
-//                                })
-//                                .exceptionally(new Function<Throwable, Void>() {
-//                                    @Override
-//                                    public Void apply(Throwable throwable) {
-//                                        Log.w(TAG, throwable.getMessage());
-//                                        return null;
-//                                    }
-//                                });
                     }
                 }else{
                     closeKeyboardIfOpen();
