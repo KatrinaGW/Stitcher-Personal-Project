@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.models.Counter;
+import com.example.stitcher.models.Project;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.UUID;
@@ -39,6 +40,7 @@ public class StitchCounterActivity extends AppCompatActivity {
     private Button deleteBtn;
 
     private Counter counter;
+    private Project parentProject;
     private boolean isNew;
 
     @Override
@@ -48,11 +50,13 @@ public class StitchCounterActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        counter = intent.getParcelableExtra("selectedCounter");
+        counter = intent.getParcelableExtra(ViewConstants.SELECTED_COUNTER.getValue());
         isNew = counter == null;
         if(isNew){
             counter = new Counter(UUID.randomUUID().toString(), 0, 0, "");
         }
+
+        parentProject = intent.getParcelableExtra(ViewConstants.PARENT_PROJECT.getValue());
     }
 
     @Override
@@ -66,7 +70,9 @@ public class StitchCounterActivity extends AppCompatActivity {
     private void setListeners(){
         addBtn.setOnClickListener(v -> onChangeCount(1));
         subtractBtn.setOnClickListener(v -> onChangeCount(-1));
-        backBtn.setOnClickListener(v -> onBackClicked());
+        backBtn.setOnClickListener(v -> {
+            onBackClicked();
+        });
         goalCounterValue.addTextChangedListener(new TextWatcher(){
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -216,7 +222,14 @@ public class StitchCounterActivity extends AppCompatActivity {
     }
 
     private void onBackClicked(){
-        startActivity(new Intent(StitchCounterActivity.this, MainActivity.class));
+        if(parentProject == null){
+            startActivity(new Intent(StitchCounterActivity.this, MainActivity.class));
+        }else{
+            Intent newIntent = new Intent(StitchCounterActivity.this, DisplayProject.class);
+            newIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), parentProject);
+            startActivity(newIntent);
+        }
+
     }
 
     private void showError(int messageId){

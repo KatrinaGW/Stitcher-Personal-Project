@@ -42,7 +42,7 @@ public class DisplayProject extends AppCompatActivity {
         setContentView(R.layout.activity_display_project);
 
         Intent intent = getIntent();
-        project = intent.getParcelableExtra("selectedProject");
+        project = intent.getParcelableExtra(ViewConstants.SELECTED_PROJECT.getValue());
     }
 
     @Override
@@ -103,7 +103,8 @@ public class DisplayProject extends AppCompatActivity {
                 Url clickedUrl = urls.get(position);
 
                 Intent urlIntent = new Intent(DisplayProject.this, UrlWebviewActivity.class);
-                urlIntent.putExtra("selectedUrl", clickedUrl);
+                urlIntent.putExtra(ViewConstants.SELECTED_URL.getValue(), clickedUrl);
+                urlIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), project);
 
                 startActivity(urlIntent);
             }
@@ -115,7 +116,8 @@ public class DisplayProject extends AppCompatActivity {
                 Counter clickedCounter = counters.get(position);
 
                 Intent counterIntent = new Intent(DisplayProject.this, StitchCounterActivity.class);
-                counterIntent.putExtra("selectedCounter", clickedCounter);
+                counterIntent.putExtra(ViewConstants.SELECTED_COUNTER.getValue(), clickedCounter);
+                counterIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), project);
 
                 startActivity(counterIntent);
             }

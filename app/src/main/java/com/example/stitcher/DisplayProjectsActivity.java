@@ -62,7 +62,7 @@ public class DisplayProjectsActivity extends AppCompatActivity {
                 Project clickedProject = projects.get(position);
 
                 Intent projectIntent = new Intent(DisplayProjectsActivity.this, DisplayProject.class);
-                projectIntent.putExtra("selectedProject", clickedProject);
+                projectIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), clickedProject);
 
                 startActivity(projectIntent);
             }
