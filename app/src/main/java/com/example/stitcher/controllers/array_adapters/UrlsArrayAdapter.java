@@ -27,7 +27,7 @@ public class UrlsArrayAdapter extends ArrayAdapter<Url> {
             parent) {
         View view;
         if (convertView == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.strings_listview,
+            view = LayoutInflater.from(getContext()).inflate(R.layout.urls_listview,
                     parent, false);
         } else {
             view = convertView;

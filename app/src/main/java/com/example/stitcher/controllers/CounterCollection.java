@@ -8,12 +8,15 @@ import androidx.annotation.NonNull;
 
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.DatabaseObject;
+import com.example.stitcher.models.Url;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -30,6 +33,16 @@ public class CounterCollection implements Database{
     public CounterCollection(){
         db = FirebaseFirestore.getInstance();
         collection = db.collection(Constants.COUNTER_COLLECTION.getValue());
+    }
+
+    private Counter documentSnapshotToCounter(DocumentSnapshot document){
+        int count = ((Long) (document.getData().get(Constants.COUNTER_COUNT_FIELD.getValue()))).intValue();
+        int countGoal = ((Long) (document.getData().get(Constants.COUNTER_GOAL_FIELD.getValue()))).intValue();
+        String name = (String) document.getData().get(Constants.COUNTER_NAME_FIELD.getValue());
+
+        Counter newCounter = new Counter(document.getId(), count, countGoal, name);
+
+        return newCounter;
     }
 
     @Override
@@ -111,11 +124,9 @@ public class CounterCollection implements Database{
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d(TAG, document.getId());
-                                    int count = ((Long) (document.getData().get(Constants.COUNTER_COUNT_FIELD.getValue()))).intValue();
-                                    int countGoal = ((Long) (document.getData().get(Constants.COUNTER_GOAL_FIELD.getValue()))).intValue();
-                                    String name = (String) document.getData().get(Constants.COUNTER_NAME_FIELD.getValue());
 
-                                    Counter newCounter = new Counter(document.getId(), count, countGoal, name);
+                                    Counter newCounter = documentSnapshotToCounter(document);
+
                                     counters.add(newCounter);
                                 }
                                 cf.complete(counters);
@@ -157,6 +168,36 @@ public class CounterCollection implements Database{
                         cf.completeExceptionally(e);
                     }
                 });
+        return cf;
+    }
+
+    public CompletableFuture<ArrayList<Counter>> getCountersWithIds(ArrayList<String> ids){
+        CompletableFuture<ArrayList<Counter>> cf = new CompletableFuture<>();
+        ArrayList<Counter> counters = new ArrayList<>();
+
+        ArrayList<String> searchIds = new ArrayList<>();
+
+        for(String id : ids){
+            searchIds.add(id.trim());
+        }
+
+        CompletableFuture.runAsync(() -> {
+            collection.whereIn(FieldPath.documentId(),searchIds)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        System.out.println(queryDocumentSnapshots.getDocuments().size());
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            Log.d(TAG, "Turning document into Counter");
+                            Counter newCounter = documentSnapshotToCounter(document);
+
+                            counters.add(newCounter);
+                        }
+                        cf.complete(counters);
+                    })
+                    .addOnFailureListener(e -> cf.completeExceptionally(e));
+        });
+
+
         return cf;
     }
 

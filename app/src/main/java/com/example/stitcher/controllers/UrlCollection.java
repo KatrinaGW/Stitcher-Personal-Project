@@ -15,10 +15,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +34,15 @@ public class UrlCollection implements Database{
     public UrlCollection(){
         db = FirebaseFirestore.getInstance();
         collection = db.collection(Constants.URLS_COLLECTION.getValue());
+    }
+
+    private Url documentSnapshotToUrl(DocumentSnapshot doc){
+        String url = (String) doc.getData().get(Constants.URLS_FIELD.getValue());
+        String id = doc.getId();
+
+        Url newURL = new Url(id, url);
+
+        return newURL;
     }
 
     @Override
@@ -46,10 +58,7 @@ public class UrlCollection implements Database{
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d(TAG, document.getId());
-                                    String url = (String) document.getData().get(Constants.URLS_FIELD.getValue());
-                                    String id = document.getId();
-
-                                    Url newURL = new Url(id, url);
+                                    Url newURL = documentSnapshotToUrl(document);
                                     urls.add(newURL);
                                 }
                                 cf.complete(urls);
@@ -67,6 +76,35 @@ public class UrlCollection implements Database{
                         }
                     });
         });
+
+        return cf;
+    }
+
+    public CompletableFuture<ArrayList<Url>> getUrlsWithIds(ArrayList<String> ids) {
+        CompletableFuture<ArrayList<Url>> cf = new CompletableFuture<>();
+        ArrayList<Url> urls = new ArrayList<>();
+
+        ArrayList<String> searchIds = new ArrayList<>();
+
+        for(String id : ids){
+            searchIds.add(id.trim());
+        }
+
+        CompletableFuture.runAsync(() -> {
+            collection.whereIn(FieldPath.documentId(),searchIds)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            Log.d(TAG, "Turning document into Url");
+                            Url newUrl = documentSnapshotToUrl(document);
+
+                            urls.add(newUrl);
+                        }
+                        cf.complete(urls);
+                    })
+                    .addOnFailureListener(e -> cf.completeExceptionally(e));
+        });
+
 
         return cf;
     }

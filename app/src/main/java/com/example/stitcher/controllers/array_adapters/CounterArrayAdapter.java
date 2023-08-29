@@ -26,7 +26,7 @@ public class CounterArrayAdapter extends ArrayAdapter<Counter> {
             parent) {
         View view;
         if (convertView == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.strings_listview,
+            view = LayoutInflater.from(getContext()).inflate(R.layout.counters_listview,
                     parent, false);
         } else {
             view = convertView;

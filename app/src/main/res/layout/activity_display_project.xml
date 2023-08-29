@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:appContext="com.example.hashcache.views.DisplayCommentsActivity">
+
+    <Button
+        android:id="@+id/display_projs_back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back" />
+
+    <LinearLayout
+        android:id="@+id/listViewsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/display_projs_back_btn"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="24dp"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/urls_listview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@color/red"
+            android:dividerHeight="1dp"
+            android:background="@drawable/listview_border" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/black" />
+
+        <ListView
+            android:id="@+id/counters_listview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@color/red"
+            android:dividerHeight="1dp"
+            android:background="@drawable/listview_border" />
+
+    </LinearLayout>
+</RelativeLayout>
+
+

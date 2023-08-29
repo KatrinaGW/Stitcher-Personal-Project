@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -52,6 +53,18 @@ public class DisplayProjectsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(DisplayProjectsActivity.this, MainActivity.class));
+            }
+        });
+
+        projectsListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Project clickedProject = projects.get(position);
+
+                Intent projectIntent = new Intent(DisplayProjectsActivity.this, DisplayProject.class);
+                projectIntent.putExtra("selectedProject", clickedProject);
+
+                startActivity(projectIntent);
             }
         });
     }
