@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -68,21 +69,24 @@ public class ProjectsCollection implements Database{
         return cf;
     }
 
-    public CompletableFuture<Boolean> updateCounterIds(String id, ArrayList<String> ids){
+    public CompletableFuture<Boolean> updateCounterIds(String id, String newCounterId){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
+        System.out.println("UPDATING IDS");
 
         CompletableFuture.runAsync(() -> {
             collection.document(id)
-                    .update(Constants.PROJECT_COUNTERS_FIELD.getValue(), ids.toArray())
+                    .update(Constants.PROJECT_COUNTERS_FIELD.getValue(), FieldValue.arrayUnion(newCounterId))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
+                            System.out.println("SUCCESSFULLY UPDATED IDS");
                             cf.complete(true);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            System.out.println("ERROR ENCOUNTERED WHILE UPDATING IDS");
                             cf.completeExceptionally(e);
                         }
                     });

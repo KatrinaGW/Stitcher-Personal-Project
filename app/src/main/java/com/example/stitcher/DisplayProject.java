@@ -34,6 +34,7 @@ public class DisplayProject extends AppCompatActivity {
     ArrayList<Url> urls;
     Project project;
     Button backBtn;
+    Button newCounterBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,16 @@ public class DisplayProject extends AppCompatActivity {
             }
         });
 
+        newCounterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent counterIntent = new Intent(DisplayProject.this, StitchCounterActivity.class);
+                counterIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), project);
+
+                startActivity(counterIntent);
+            }
+        });
+
         urlsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -128,6 +139,7 @@ public class DisplayProject extends AppCompatActivity {
         urlsListView = findViewById(R.id.urls_listview);
         countersListView = findViewById(R.id.counters_listview);
         backBtn = findViewById(R.id.display_projs_back_btn);
+        newCounterBtn = findViewById(R.id.add_counter_to_proj_btn);
         setAdapters();
         setListeners();
     }

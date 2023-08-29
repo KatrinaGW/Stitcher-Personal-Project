@@ -36,9 +36,15 @@ public class CreateCounterHandler {
 
             );
 
+        System.out.println("Project Id is");
+        System.out.println(parentProject.getId());
+        System.out.println(parentProject.getCounterIds());
+
         CompletableFuture futureProjectUpdate = CompletableFuture.supplyAsync(() ->
-                projectsCollection.updateCounterIds(parentProject.getId(), parentProject.getCounterIds())
+                projectsCollection.updateCounterIds(parentProject.getId(), counter.getId())
                         .thenAccept(success -> {
+                            System.out.println("Update project success is");
+                                    System.out.println(success);
                             if(!success){
                                 errors.add(new Exception("Something went wrong while updating the project counters"));
                             }
@@ -46,6 +52,7 @@ public class CreateCounterHandler {
                         .exceptionally(new Function<Throwable, Void>() {
                             @Override
                             public Void apply(Throwable throwable) {
+                                System.out.println("ERROR ENCOUNTERED");
                                 errors.add(throwable);
                                 return null;
                             }
@@ -59,6 +66,26 @@ public class CreateCounterHandler {
             cf.complete(errors.size()==0);
         });
 
+
+        return cf;
+    }
+
+    public CompletableFuture<Boolean> testCreation(Counter counter, Project parentProject){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        projectsCollection.updateCounterIds(parentProject.getId(), counter.getId())
+                .thenAccept(success -> {
+                    System.out.println("Update project success is");
+                    System.out.println(success);
+                    cf.complete(success);
+                })
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        cf.completeExceptionally(throwable);
+                        return null;
+                    }
+                });
 
         return cf;
     }
