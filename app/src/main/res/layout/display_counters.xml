@@ -6,13 +6,23 @@
     tools:appContext="com.example.hashcache.views.DisplayCommentsActivity">
 
 
+    <Button
+        android:id="@+id/counters_back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back" />
+
     <ListView
         android:id="@+id/counters_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/counters_back_btn"
+        android:layout_marginTop="0dp"
         android:layout_marginBottom="24dp"
         android:divider="@color/red"
-        android:dividerHeight="1dp"/>
+        android:dividerHeight="1dp">
+
+    </ListView>
 
 
 

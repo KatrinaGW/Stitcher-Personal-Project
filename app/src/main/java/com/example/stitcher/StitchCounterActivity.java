@@ -14,8 +14,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stitcher.controllers.CounterCollection;
+import com.example.stitcher.models.Counter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -26,23 +28,31 @@ public class StitchCounterActivity extends AppCompatActivity {
     private Button backBtn;
     private TextView negativeErrorTxt;
     private EditText goalCounterValue;
-    private int count = 0;
-    private int countGoal;
-    private FloatingActionButton tester;
+
+    private Counter counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stitch_counter_activity);
 
-        countText = findViewById(R.id.stitch_counter_value_txt);
-        negativeErrorTxt = findViewById(R.id.counter_error_txt);
-        setCountText();
-        addBtn = findViewById(R.id.add_count_btn);
-        subtractBtn = findViewById(R.id.subtract_count_btn);
-        backBtn = findViewById(R.id.counter_back_btn);
-        goalCounterValue = findViewById(R.id.counter_goal_value);
+        Intent intent = getIntent();
 
+        counter = intent.getParcelableExtra("selectedCounter");
+        if(counter == null){
+            counter = new Counter(UUID.randomUUID().toString(), 0, 0, "Testing");
+        }
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        findElements();
+        setTexts();
+        setListeners();
+    }
+
+    private void setListeners(){
         addBtn.setOnClickListener(v -> onChangeCount(1));
         subtractBtn.setOnClickListener(v -> onChangeCount(-1));
         backBtn.setOnClickListener(v -> onBackClicked());
@@ -53,7 +63,7 @@ public class StitchCounterActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String newText = charSequence.toString();
-                countGoal = Integer.parseInt(newText);
+                counter.setGoal(Integer.parseInt(newText));
 
                 setCountText();
             }
@@ -61,8 +71,20 @@ public class StitchCounterActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+    }
 
-        CounterCollection db = new CounterCollection();
+    private void setTexts(){
+        setCountText();
+        goalCounterValue.setText(String.valueOf(counter.getGoal()));
+    }
+
+    private void findElements(){
+        countText = findViewById(R.id.stitch_counter_value_txt);
+        negativeErrorTxt = findViewById(R.id.counter_error_txt);
+        addBtn = findViewById(R.id.add_count_btn);
+        subtractBtn = findViewById(R.id.subtract_count_btn);
+        backBtn = findViewById(R.id.counter_back_btn);
+        goalCounterValue = findViewById(R.id.counter_goal_value);
     }
 
     private void onBackClicked(){
@@ -82,30 +104,30 @@ public class StitchCounterActivity extends AppCompatActivity {
     }
 
     private void onChangeCount(int addend){
-        if(count+addend < 0){
+        if(counter.getCount()+addend < 0){
             showError();
         }else{
-            count = count + addend;
+            counter.addToCount(addend);
             setCountText();
         }
 
     }
 
     private void setCountText(){
-        countText.setText(Integer.toString(count));
+        countText.setText(Integer.toString(counter.getCount()));
         checkCount();
     }
 
     private void checkCount(){
-        if(count == countGoal){
+        if(counter.getCount() == counter.getGoal()){
             countText.setTextColor(Color.GREEN);
         }
 
-        if(count > countGoal){
+        if(counter.getCount() > counter.getGoal()){
             countText.setTextColor(Color.RED);
         }
 
-        if(count < countGoal){
+        if(counter.getCount() < counter.getGoal()){
             countText.setTextColor(Color.BLACK);
         }
     }

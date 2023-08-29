@@ -3,6 +3,7 @@ package com.example.stitcher;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.stitcher.models.Counter;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     private Button stitchCounterButton;
+    private Button allCountersButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         stitchCounterButton = findViewById(R.id.stitch_counter_btn);
+        allCountersButton = findViewById(R.id.all_counters);
+
+        allCountersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, CountersActivity.class));
+            }
+        });
 
 
         stitchCounterButton.setOnClickListener(new View.OnClickListener() {

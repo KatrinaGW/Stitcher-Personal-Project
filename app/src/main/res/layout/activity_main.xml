@@ -6,13 +6,21 @@
     android:layout_height="match_parent">
 
     <Button
+        android:id="@+id/all_counters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:text="All Counters" />
+
+    <Button
         android:id="@+id/stitch_counter_btn"
         android:layout_width="wrap_content"
         android:layout_height="67dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/all_counters"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="320dp"
-        android:layout_marginBottom="344dp"
+        android:layout_marginTop="10dp"
         android:text="Stitch Counter" />
+
 </RelativeLayout>
