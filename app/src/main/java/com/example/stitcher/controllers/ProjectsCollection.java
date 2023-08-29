@@ -71,7 +71,6 @@ public class ProjectsCollection implements Database{
 
     public CompletableFuture<Boolean> updateCounterIds(String id, String newCounterId){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
-        System.out.println("UPDATING IDS");
 
         CompletableFuture.runAsync(() -> {
             collection.document(id)
@@ -79,14 +78,35 @@ public class ProjectsCollection implements Database{
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
-                            System.out.println("SUCCESSFULLY UPDATED IDS");
                             cf.complete(true);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            System.out.println("ERROR ENCOUNTERED WHILE UPDATING IDS");
+                            cf.completeExceptionally(e);
+                        }
+                    });
+        });
+
+        return cf;
+    }
+
+    public CompletableFuture<Boolean> updateUrlIds(String id, String newUrlId){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
+            collection.document(id)
+                    .update(Constants.PROJECT_URLS_FIELD.getValue(), FieldValue.arrayUnion(newUrlId))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            cf.complete(true);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
                             cf.completeExceptionally(e);
                         }
                     });

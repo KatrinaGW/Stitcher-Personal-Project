@@ -21,6 +21,15 @@
         android:layout_marginStart="100dp"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/add_url_to_proj_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Url"
+        app:layout_constraintStart_toEndOf="@id/add_counter_to_proj_btn"
+        android:layout_marginStart="250dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/listViewsLayout"
         android:layout_width="match_parent"

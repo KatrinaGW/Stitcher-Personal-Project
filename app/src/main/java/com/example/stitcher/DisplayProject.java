@@ -35,6 +35,7 @@ public class DisplayProject extends AppCompatActivity {
     Project project;
     Button backBtn;
     Button newCounterBtn;
+    Button newUrlBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,6 +141,7 @@ public class DisplayProject extends AppCompatActivity {
         countersListView = findViewById(R.id.counters_listview);
         backBtn = findViewById(R.id.display_projs_back_btn);
         newCounterBtn = findViewById(R.id.add_counter_to_proj_btn);
+        newUrlBtn = findViewById(R.id.add_url_to_proj_btn);
         setAdapters();
         setListeners();
     }
