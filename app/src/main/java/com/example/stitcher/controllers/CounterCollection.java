@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -24,9 +25,11 @@ import java.util.concurrent.CompletableFuture;
 
 public class CounterCollection implements Database{
     FirebaseFirestore db;
+    CollectionReference collection;
 
     public CounterCollection(){
         db = FirebaseFirestore.getInstance();
+        collection = db.collection(Constants.COUNTER_COLLECTION.getValue());
     }
 
     @Override
@@ -35,8 +38,7 @@ public class CounterCollection implements Database{
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<String> errors = new ArrayList<>();
 
-        DocumentReference documentReference = this.db.collection(Constants.COUNTER_COLLECTION.getValue())
-                .document(counter.getId());
+        DocumentReference documentReference = collection.document(counter.getId());
 
         CompletableFuture futureCount = CompletableFuture.supplyAsync(()->
                 documentReference.update(Constants.COUNTER_COUNT_FIELD.getValue(), counter.getCount())
@@ -102,8 +104,7 @@ public class CounterCollection implements Database{
         CompletableFuture<ArrayList<? extends DatabaseObject>> cf = new CompletableFuture<>();
 
         CompletableFuture.runAsync(() -> {
-            db.collection(Constants.COUNTER_COLLECTION.getValue())
-                    .get()
+            collection.get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -140,7 +141,7 @@ public class CounterCollection implements Database{
         counterMap.put(Constants.COUNTER_GOAL_FIELD.getValue(), counter.getGoal());
         counterMap.put(Constants.COUNTER_NAME_FIELD.getValue(), counter.getName());
 
-        db.collection(Constants.COUNTER_COLLECTION.getValue()).document(counter.getId())
+        collection.document(counter.getId())
                 .set(counterMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -153,7 +154,7 @@ public class CounterCollection implements Database{
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error writing document", e);
-                        cf.complete(false);
+                        cf.completeExceptionally(e);
                     }
                 });
         return cf;
@@ -162,8 +163,7 @@ public class CounterCollection implements Database{
     public CompletableFuture<Boolean> deleteRecord(String id){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 
-        db.collection(Constants.COUNTER_COLLECTION.getValue())
-                .document(id)
+        collection.document(id)
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

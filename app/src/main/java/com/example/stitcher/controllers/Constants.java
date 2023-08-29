@@ -1,6 +1,8 @@
 package com.example.stitcher.controllers;
 
 public enum Constants {
+    URLS_COLLECTION("Urls"),
+    URLS_FIELD("url"),
     COUNTER_COLLECTION("Counters"),
     COUNTER_COUNT_FIELD("count"),
     COUNTER_GOAL_FIELD("goal"),

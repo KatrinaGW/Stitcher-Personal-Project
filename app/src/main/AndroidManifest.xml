@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +25,8 @@
         </activity>
         <activity android:name="StitchCounterActivity" />
         <activity android:name=".CountersActivity" />
+        <activity android:name=".WebviewActivity"/>
+        <activity android:name=".DisplayUrlsActivity"/>
     </application>
 
 </manifest>

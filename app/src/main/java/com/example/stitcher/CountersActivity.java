@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +28,7 @@ public class CountersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.display_counters);
+        setContentView(R.layout.display_strings);
 
     }
 
@@ -87,8 +86,8 @@ public class CountersActivity extends AppCompatActivity {
     }
 
     private void init(){
-        countersListView = findViewById(R.id.counters_listview);
-        backBtn = findViewById(R.id.counters_back_btn);
+        countersListView = findViewById(R.id.strings_listview);
+        backBtn = findViewById(R.id.strings_back_btn);
         setCountersArrayAdapter();
         setButtons();
         setOnItemClickedListener();

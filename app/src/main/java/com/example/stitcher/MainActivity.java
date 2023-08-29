@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button stitchCounterButton;
     private Button allCountersButton;
+    private Button urlsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
 
         stitchCounterButton = findViewById(R.id.stitch_counter_btn);
         allCountersButton = findViewById(R.id.all_counters);
+        urlsBtn = findViewById(R.id.view_urls_btn);
+
+        urlsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, DisplayUrlsActivity.class));
+            }
+        });
 
         allCountersButton.setOnClickListener(new View.OnClickListener() {
             @Override

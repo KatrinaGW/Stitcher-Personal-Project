@@ -12,12 +12,13 @@ import androidx.annotation.Nullable;
 
 import com.example.stitcher.R;
 import com.example.stitcher.models.Counter;
+import com.example.stitcher.models.Url;
 
 import java.util.ArrayList;
 
-public class CounterArrayAdapter extends ArrayAdapter<Counter> {
-    public CounterArrayAdapter(Context context, ArrayList<Counter> counterData) {
-        super(context, 0, counterData);
+public class UrlsArrayAdapter extends ArrayAdapter<Url> {
+    public UrlsArrayAdapter(Context context, ArrayList<Url> urlData) {
+        super(context, 0, urlData);
     }
 
     @NonNull
@@ -32,11 +33,11 @@ public class CounterArrayAdapter extends ArrayAdapter<Counter> {
             view = convertView;
         }
 
-        Counter counter = getItem(position);
+        Url url = getItem(position);
 
         TextView counterName = view.findViewById(R.id.string_value_txt);
 
-        counterName.setText(counter.getName());
+        counterName.setText(url.getUrl());
 
         return view;
     }
