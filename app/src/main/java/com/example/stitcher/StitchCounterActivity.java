@@ -28,6 +28,7 @@ public class StitchCounterActivity extends AppCompatActivity {
     private Button backBtn;
     private TextView negativeErrorTxt;
     private EditText goalCounterValue;
+    private EditText counterNameValue;
 
     private Counter counter;
 
@@ -71,11 +72,27 @@ public class StitchCounterActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+        counterNameValue.addTextChangedListener(new TextWatcher(){
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String newText = charSequence.toString();
+                counter.setName(newText);
+
+                setNameText();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     private void setTexts(){
         setCountText();
         goalCounterValue.setText(String.valueOf(counter.getGoal()));
+        counterNameValue.setText(counter.getName());
     }
 
     private void findElements(){
@@ -85,6 +102,7 @@ public class StitchCounterActivity extends AppCompatActivity {
         subtractBtn = findViewById(R.id.subtract_count_btn);
         backBtn = findViewById(R.id.counter_back_btn);
         goalCounterValue = findViewById(R.id.counter_goal_value);
+        counterNameValue = findViewById(R.id.counter_label_value);
     }
 
     private void onBackClicked(){
@@ -116,6 +134,10 @@ public class StitchCounterActivity extends AppCompatActivity {
     private void setCountText(){
         countText.setText(Integer.toString(counter.getCount()));
         checkCount();
+    }
+
+    private void setNameText(){
+        counterNameValue.setText(counter.getName());
     }
 
     private void checkCount(){

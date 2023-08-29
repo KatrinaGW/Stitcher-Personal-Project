@@ -14,4 +14,5 @@
     <string name="goal_count_label">Goal Count:</string>
     <string name="subtract">Subtract</string>
     <string name="add">Add</string>
+    <string name="counter_label_txt">Counter Label:</string>
 </resources>
