@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stitcher.controllers.CounterCollection;
+import com.example.stitcher.controllers.handlers.CreateCounterHandler;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.Project;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -158,24 +159,46 @@ public class StitchCounterActivity extends AppCompatActivity {
                                     }
                                 });
                     }else{
-                        counterCollectionConnection.insertRecord(counter.getId(), counter)
-                                .thenAccept(success -> {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            System.out.println(success);
-                                            closeKeyboardIfOpen();
-                                            showSavedMsg();
-                                        }
-                                    });
-                                })
+                        CreateCounterHandler createCounterHandler = new CreateCounterHandler();
+
+                        createCounterHandler.createNewCounter(counter, parentProject)
+                                        .thenAccept(success -> {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    System.out.println(success);
+                                                    closeKeyboardIfOpen();
+                                                    showSavedMsg();
+                                                }
+                                            });
+                                        })
                                 .exceptionally(new Function<Throwable, Void>() {
                                     @Override
                                     public Void apply(Throwable throwable) {
-                                        Log.w(TAG, throwable.getMessage());
+                                        Log.e(TAG, "ERROR", throwable);
                                         return null;
                                     }
                                 });
+
+
+//                        counterCollectionConnection.insertRecord(counter.getId(), counter)
+//                                .thenAccept(success -> {
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            System.out.println(success);
+//                                            closeKeyboardIfOpen();
+//                                            showSavedMsg();
+//                                        }
+//                                    });
+//                                })
+//                                .exceptionally(new Function<Throwable, Void>() {
+//                                    @Override
+//                                    public Void apply(Throwable throwable) {
+//                                        Log.w(TAG, throwable.getMessage());
+//                                        return null;
+//                                    }
+//                                });
                     }
                 }else{
                     closeKeyboardIfOpen();

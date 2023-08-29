@@ -11,3 +11,8 @@ public interface Database {
     public abstract CompletableFuture<Boolean> insertRecord(String id, DatabaseObject obj);
     public abstract CompletableFuture<Boolean> deleteRecord(String id);
 }
+
+/**
+ * TODO:
+ * Make static references for all of the collections
+ */
