@@ -51,7 +51,7 @@ public class DisplayUrlsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Url clickedUrl = urls.get(position);
 
-                Intent urlIntent = new Intent(DisplayUrlsActivity.this, WebviewActivity.class);
+                Intent urlIntent = new Intent(DisplayUrlsActivity.this, UrlWebviewActivity.class);
                 urlIntent.putExtra("selectedUrl", clickedUrl);
 
                 startActivity(urlIntent);
