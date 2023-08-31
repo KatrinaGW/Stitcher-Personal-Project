@@ -62,15 +62,13 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
 
     private void setAdapters(){
         DisplayProject displayProject = this;
-        UrlCollection urlCollection = new UrlCollection();
-        CounterCollection counterCollection = new CounterCollection();
 
         if(project.getUrlIds().size()==0){
             urls = new ArrayList<>();
             urlsArrayAdapter = new UrlsArrayAdapter(displayProject, urls);
             urlsListView.setAdapter(urlsArrayAdapter);
         }else{
-            urlCollection.getUrlsWithIds(project.getUrlIds())
+            UrlCollection.getInstance().getUrlsWithIds(project.getUrlIds())
                     .thenAccept(newUrls -> {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -87,7 +85,7 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
                     });
         }
 
-        counterCollection.getCountersWithIds(project.getCounterIds())
+        CounterCollection.getInstance().getCountersWithIds(project.getCounterIds())
                 .thenAccept(newCounters -> {
                     runOnUiThread(new Runnable() {
                         @Override

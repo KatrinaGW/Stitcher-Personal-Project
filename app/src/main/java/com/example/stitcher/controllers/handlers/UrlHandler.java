@@ -14,16 +14,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class UrlHandler {
-    UrlCollection urlCollection = new UrlCollection();
-    ProjectsCollection projectsCollection = new ProjectsCollection();
-
     public CompletableFuture<Boolean> deleteUrl(Url url, Project parentProject){
         parentProject.removeUrl(url.getId());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
 
         CompletableFuture futureUrl = CompletableFuture.supplyAsync(() ->
-            urlCollection.deleteRecord(url.getId())
+            UrlCollection.getInstance().deleteRecord(url.getId())
                     .thenAccept(success -> {
                         if(!success){
                             errors.add(new Exception("Something went wrong when deleting the url!"));
@@ -40,7 +37,7 @@ public class UrlHandler {
         );
 
         CompletableFuture futureProject = CompletableFuture.supplyAsync(() ->
-                projectsCollection.removeUrlId(parentProject.getId(), url.getId())
+                ProjectsCollection.getInstance().removeUrlId(parentProject.getId(), url.getId())
                 .thenAccept(success -> {
                     if(!success){
                         errors.add(new Exception("Something went wrong when removing the url from the project!"));
@@ -71,7 +68,7 @@ public class UrlHandler {
         ArrayList<Throwable> errors = new ArrayList<>();
 
         CompletableFuture futureUrl = CompletableFuture.supplyAsync(() ->
-                urlCollection.insertRecord(url.getId(), url)
+                UrlCollection.getInstance().insertRecord(url.getId(), url)
                         .thenAccept(success -> {
                             if(!success){
                                 errors.add(new Exception("Something went wrong while creating the Url"));
@@ -88,7 +85,7 @@ public class UrlHandler {
         );
 
         CompletableFuture futureProjectUpdate = CompletableFuture.supplyAsync(() ->
-                projectsCollection.updateUrlIds(parentProject.getId(), url.getId())
+                ProjectsCollection.getInstance().updateUrlIds(parentProject.getId(), url.getId())
                         .thenAccept(success -> {
                             if(!success){
                                 errors.add(new Exception("Something went wrong while updating the project urls"));

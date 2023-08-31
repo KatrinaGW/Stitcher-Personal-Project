@@ -31,10 +31,19 @@ import java.util.concurrent.CompletableFuture;
 public class ProjectsCollection implements Database{
     private CollectionReference collection;
     private FirebaseFirestore db;
+    private static ProjectsCollection INSTANCE;
 
-    public ProjectsCollection(){
+    private ProjectsCollection(){
         db = FirebaseFirestore.getInstance();
         collection = db.collection(Constants.PROJECT_COLLECTION.getValue());
+    }
+
+    public static ProjectsCollection getInstance(){
+        if(INSTANCE == null){
+            INSTANCE = new ProjectsCollection();
+        }
+
+        return INSTANCE;
     }
 
     @Override

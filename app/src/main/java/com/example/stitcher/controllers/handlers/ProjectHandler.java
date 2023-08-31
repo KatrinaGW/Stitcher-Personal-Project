@@ -14,14 +14,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class ProjectHandler {
-    private ProjectsCollection projectsCollection = new ProjectsCollection();
-    private CounterCollection counterCollection = new CounterCollection();
-    private UrlCollection urlCollection = new UrlCollection();
-
     public CompletableFuture<Boolean> createNewProject(Project project){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 
-        projectsCollection.insertRecord(project.getId(), project)
+        ProjectsCollection.getInstance().insertRecord(project.getId(), project)
                 .thenAccept(success -> cf.complete(success))
                 .exceptionally(new Function<Throwable, Void>() {
                     @Override
@@ -38,7 +34,7 @@ public class ProjectHandler {
     public CompletableFuture<Boolean> updateProjectName(Project project){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 
-        projectsCollection.updateName(project.getId(), project.getName())
+        ProjectsCollection.getInstance().updateName(project.getId(), project.getName())
                 .thenAccept(success -> cf.complete(success))
                 .exceptionally(new Function<Throwable, Void>() {
                     @Override
@@ -59,7 +55,7 @@ public class ProjectHandler {
 
         for(String urlId : project.getUrlIds()){
             cfs.add(CompletableFuture.supplyAsync(() ->
-                    urlCollection.deleteRecord(urlId)
+                    UrlCollection.getInstance().deleteRecord(urlId)
                             .thenAccept(success -> {
                                 if(!success){
                                     errors.add(new Exception("Something went wrong when deleting the url!"));
@@ -78,7 +74,7 @@ public class ProjectHandler {
 
         for(String counterId : project.getCounterIds()){
             cfs.add(CompletableFuture.supplyAsync(() ->
-                    counterCollection.deleteRecord(counterId)
+                    CounterCollection.getInstance().deleteRecord(counterId)
                             .thenAccept(success -> {
                                 if(!success){
                                     errors.add(new Exception("Something went wrong when deleting the counter!"));
@@ -96,7 +92,7 @@ public class ProjectHandler {
         }
 
         cfs.add(CompletableFuture.supplyAsync(() ->
-                projectsCollection.deleteRecord(project.getId())
+                ProjectsCollection.getInstance().deleteRecord(project.getId())
                         .thenAccept(success -> {
                             if(!success){
                                 errors.add(new Exception("Something went wrong when deleting the project!"));

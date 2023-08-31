@@ -158,8 +158,6 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
     }
 
     private void setProjectsArrayAdapter(){
-        ProjectsCollection projCollection = new ProjectsCollection();
-
         DisplayProjectsActivity projsActivity = this;
 
         if(projects == null){
@@ -168,7 +166,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
             projects.clear();
         }
 
-        projCollection.getAll()
+        ProjectsCollection.getInstance().getAll()
                 .thenAccept(newProjs -> {
                     runOnUiThread(new Runnable() {
                         @Override

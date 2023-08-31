@@ -140,10 +140,9 @@ public class StitchCounterActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CounterCollection counterCollectionConnection = new CounterCollection();
                 if(verifyInput()){
                     if(!isNew){
-                        counterCollectionConnection.updateRecord(counter.getId(), counter)
+                        CounterCollection.getInstance().updateRecord(counter.getId(), counter)
                                 .thenAccept(success -> {
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -226,11 +225,9 @@ public class StitchCounterActivity extends AppCompatActivity {
     }
 
     private void onBackClicked(){
-            Intent newIntent = new Intent(StitchCounterActivity.this, DisplayProject.class);
-            newIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), parentProject);
-            startActivity(newIntent);
-
-
+        Intent newIntent = new Intent(StitchCounterActivity.this, DisplayProject.class);
+        newIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), parentProject);
+        startActivity(newIntent);
     }
 
     private void showError(int messageId){

@@ -14,16 +14,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class CounterHandler {
-    private CounterCollection counterCollection = new CounterCollection();
-    private ProjectsCollection projectsCollection = new ProjectsCollection();
-
     public CompletableFuture<Boolean> deleteCounter(Counter counter, Project parentProject){
         parentProject.removeCounter(counter.getId());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
 
         CompletableFuture futureCounter = CompletableFuture.supplyAsync(() ->
-                counterCollection.deleteRecord(counter.getId())
+                CounterCollection.getInstance().deleteRecord(counter.getId())
                         .thenAccept(success -> {
                             if(!success){
                                 errors.add(new Exception("Something went wrong when deleting the counter!"));
@@ -40,7 +37,7 @@ public class CounterHandler {
         );
 
         CompletableFuture futureProject = CompletableFuture.supplyAsync(() ->
-                projectsCollection.removeCounterid(parentProject.getId(), counter.getId())
+                ProjectsCollection.getInstance().removeCounterid(parentProject.getId(), counter.getId())
                         .thenAccept(success -> {
                             if(!success){
                                 errors.add(new Exception("Something went wrong when removing the counter from the project!"));
@@ -71,7 +68,7 @@ public class CounterHandler {
         ArrayList<Throwable> errors = new ArrayList<>();
 
         CompletableFuture futureCounter = CompletableFuture.supplyAsync(() ->
-            counterCollection.insertRecord(counter.getId(), counter)
+            CounterCollection.getInstance().insertRecord(counter.getId(), counter)
                     .thenAccept(success -> {
                         if(!success){
                             errors.add(new Exception("Something went wrong while creating the Counter"));
@@ -88,7 +85,7 @@ public class CounterHandler {
             );
 
         CompletableFuture futureProjectUpdate = CompletableFuture.supplyAsync(() ->
-                projectsCollection.updateCounterIds(parentProject.getId(), counter.getId())
+                ProjectsCollection.getInstance().updateCounterIds(parentProject.getId(), counter.getId())
                         .thenAccept(success -> {
                             if(!success){
                                 errors.add(new Exception("Something went wrong while updating the project counters"));

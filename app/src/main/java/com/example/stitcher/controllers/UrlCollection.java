@@ -30,10 +30,19 @@ import java.util.concurrent.CompletableFuture;
 public class UrlCollection implements Database{
     CollectionReference collection;
     FirebaseFirestore db;
+    private static UrlCollection INSTANCE;
 
-    public UrlCollection(){
+    private UrlCollection(){
         db = FirebaseFirestore.getInstance();
         collection = db.collection(Constants.URLS_COLLECTION.getValue());
+    }
+
+    public static UrlCollection getInstance(){
+        if(INSTANCE == null){
+            INSTANCE = new UrlCollection();
+        }
+
+        return INSTANCE;
     }
 
     private Url documentSnapshotToUrl(DocumentSnapshot doc){

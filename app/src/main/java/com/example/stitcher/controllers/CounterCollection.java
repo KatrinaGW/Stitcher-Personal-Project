@@ -27,12 +27,21 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class CounterCollection implements Database{
-    FirebaseFirestore db;
-    CollectionReference collection;
+    private FirebaseFirestore db;
+    private CollectionReference collection;
+    private static CounterCollection INSTANCE;
 
-    public CounterCollection(){
+    private CounterCollection(){
         db = FirebaseFirestore.getInstance();
         collection = db.collection(Constants.COUNTER_COLLECTION.getValue());
+    }
+
+    public static CounterCollection getInstance(){
+        if(INSTANCE == null){
+            INSTANCE = new CounterCollection();
+        }
+
+        return INSTANCE;
     }
 
     private Counter documentSnapshotToCounter(DocumentSnapshot document){
