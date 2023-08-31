@@ -19,7 +19,6 @@
         android:layout_below="@+id/strings_back_btn"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="24dp"
-        android:divider="@color/red"
         android:dividerHeight="1dp">
 
     </ListView>

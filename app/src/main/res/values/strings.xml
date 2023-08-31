@@ -17,4 +17,5 @@
     <string name="add">Add</string>
     <string name="counter_label_txt">Counter Label:</string>
     <string name="saved_msg_text">Saved!</string>
+    <string name="delete_url">Delete Url</string>
 </resources>

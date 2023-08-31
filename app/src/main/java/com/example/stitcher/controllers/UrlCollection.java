@@ -102,7 +102,10 @@ public class UrlCollection implements Database{
                         }
                         cf.complete(urls);
                     })
-                    .addOnFailureListener(e -> cf.completeExceptionally(e));
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "ERROR", e);
+                        cf.completeExceptionally(e);
+                    });
         });
 
 

@@ -61,6 +61,10 @@ public class Project extends DatabaseObject implements Parcelable {
         return urlIds;
     }
 
+    public void removeUrl(String urlId){
+        this.urlIds.remove(urlId);
+    }
+
     @Override
     public int describeContents() {
         return 0;

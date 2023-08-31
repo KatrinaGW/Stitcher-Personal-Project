@@ -69,6 +69,30 @@ public class ProjectsCollection implements Database{
         return cf;
     }
 
+    public CompletableFuture<Boolean> removeUrlId(String projectId, String urlId){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
+            collection.document(projectId)
+                    .update(Constants.PROJECT_URLS_FIELD.getValue(), FieldValue.arrayRemove(urlId))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            cf.complete(true);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "ERROR", e);
+                            cf.completeExceptionally(e);
+                        }
+                    });
+        });
+
+        return cf;
+    }
+
     public CompletableFuture<Boolean> updateCounterIds(String id, String newCounterId){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 

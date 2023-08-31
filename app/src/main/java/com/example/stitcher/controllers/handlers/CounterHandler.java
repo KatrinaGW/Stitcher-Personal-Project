@@ -2,7 +2,6 @@ package com.example.stitcher.controllers.handlers;
 
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.ProjectsCollection;
-import com.example.stitcher.controllers.UrlCollection;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.Project;
 
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class CreateCounterHandler {
+public class CounterHandler {
     private CounterCollection counterCollection = new CounterCollection();
     private ProjectsCollection projectsCollection = new ProjectsCollection();
 

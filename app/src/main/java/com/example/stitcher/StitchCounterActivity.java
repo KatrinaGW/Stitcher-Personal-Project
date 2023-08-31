@@ -19,13 +19,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stitcher.controllers.CounterCollection;
-import com.example.stitcher.controllers.handlers.CreateCounterHandler;
+import com.example.stitcher.controllers.handlers.CounterHandler;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.Project;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class StitchCounterActivity extends AppCompatActivity {
@@ -159,9 +157,9 @@ public class StitchCounterActivity extends AppCompatActivity {
                                     }
                                 });
                     }else{
-                        CreateCounterHandler createCounterHandler = new CreateCounterHandler();
+                        CounterHandler counterHandler = new CounterHandler();
 
-                        createCounterHandler.createNewCounter(counter, parentProject)
+                        counterHandler.createNewCounter(counter, parentProject)
                                         .thenAccept(success -> {
                                             runOnUiThread(new Runnable() {
                                                 @Override
