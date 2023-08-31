@@ -12,6 +12,14 @@
         android:layout_height="wrap_content"
         android:text="Back" />
 
+    <Button
+        android:id="@+id/new_project_btn"
+        android:layout_toEndOf="@id/strings_back_btn"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_height="wrap_content"
+        android:text="New Project" />
+
     <ListView
         android:id="@+id/strings_listview"
         android:layout_width="match_parent"

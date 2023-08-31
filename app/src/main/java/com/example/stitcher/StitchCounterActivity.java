@@ -100,7 +100,6 @@ public class StitchCounterActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String newText = charSequence.toString();
-                System.out.println(newText);
                 counter.setName(newText);
             }
 
@@ -111,24 +110,48 @@ public class StitchCounterActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CounterCollection counterCollectionConnection = new CounterCollection();
-                counterCollectionConnection.deleteRecord(counter.getId())
-                        .thenAccept(success -> {
-                            runOnUiThread(new Runnable() {
+                if(parentProject==null){
+                    CounterCollection counterCollectionConnection = new CounterCollection();
+                    counterCollectionConnection.deleteRecord(counter.getId())
+                            .thenAccept(success -> {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startActivity(new Intent(StitchCounterActivity.this, MainActivity.class));
+                                    }
+                                });
+                            })
+                            .exceptionally(new Function<Throwable, Void>() {
                                 @Override
-                                public void run() {
-                                    System.out.println(success);
-                                    startActivity(new Intent(StitchCounterActivity.this, MainActivity.class));
+                                public Void apply(Throwable throwable) {
+                                    return null;
                                 }
                             });
-                        })
-                        .exceptionally(new Function<Throwable, Void>() {
-                            @Override
-                            public Void apply(Throwable throwable) {
-                                System.out.println(throwable.getMessage());
-                                return null;
-                            }
-                        });
+                }else{
+                    CounterHandler counterHandler = new CounterHandler();
+
+                    counterHandler.deleteCounter(counter, parentProject)
+                            .thenAccept(success ->
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if(success){
+                                                Intent projectIntent = new Intent(StitchCounterActivity.this, DisplayProject.class);
+                                                projectIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), parentProject);
+                                                startActivity(projectIntent);
+                                            }else{
+                                                Log.e(TAG, "Something went wrong when deleting the counter!");
+                                            }
+                                        }
+                                    }))
+                            .exceptionally(new Function<Throwable, Void>() {
+                                @Override
+                                public Void apply(Throwable throwable) {
+                                    Log.e(TAG, "ERROR", throwable);
+                                    return null;
+                                }
+                            });
+                }
             }
         });
 
@@ -143,7 +166,6 @@ public class StitchCounterActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            System.out.println(success);
                                             closeKeyboardIfOpen();
                                             showSavedMsg();
                                         }
@@ -152,7 +174,6 @@ public class StitchCounterActivity extends AppCompatActivity {
                                 .exceptionally(new Function<Throwable, Void>() {
                                     @Override
                                     public Void apply(Throwable throwable) {
-                                        System.out.println(throwable.getMessage());
                                         return null;
                                     }
                                 });
@@ -164,7 +185,6 @@ public class StitchCounterActivity extends AppCompatActivity {
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    System.out.println(success);
                                                     closeKeyboardIfOpen();
                                                     showSavedMsg();
                                                 }

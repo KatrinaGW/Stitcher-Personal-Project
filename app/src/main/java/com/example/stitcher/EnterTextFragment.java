@@ -13,29 +13,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.stitcher.controllers.handlers.UrlHandler;
-import com.example.stitcher.models.Url;
 
-import java.util.UUID;
-
-public class AddUrlFragment extends Fragment {
+public class EnterTextFragment extends Fragment {
     Button confirmBtn;
     Button cancelBtn;
-    EditText urlTxt;
-    AddUrlFragmentHandler fragmentHandler;
+    EditText enterTxt;
+    EnterTextFragmentHandler fragmentHandler;
     TextView errorTxt;
+    int errorCode;
 
-    interface AddUrlFragmentHandler{
+    interface EnterTextFragmentHandler {
         void dismissFragment();
-        void createNewUrl(Url url);
+        void createNew(String input);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         super.onCreateView(inflater, container, savedInstanceState);
+        errorCode = this.getArguments().getInt(ViewConstants.FRAGMENT_ERROR_MSG.getValue());
 
-        return inflater.inflate(R.layout.fragment_add_url,
+        return inflater.inflate(R.layout.fragment_enter_text,
                 container, false);
     }
 
@@ -43,8 +41,8 @@ public class AddUrlFragment extends Fragment {
     public void onAttach(@NonNull Context context){
         super.onAttach(context);
 
-        if(context instanceof AddUrlFragmentHandler){
-            fragmentHandler = (AddUrlFragmentHandler) context;
+        if(context instanceof EnterTextFragmentHandler){
+            fragmentHandler = (EnterTextFragmentHandler) context;
         }
     }
 
@@ -56,17 +54,15 @@ public class AddUrlFragment extends Fragment {
     }
 
     private void init(){
-        urlTxt = getView().findViewById(R.id.add_url_edittext);
-        confirmBtn = getView().findViewById(R.id.url_confirm_btn);
-        cancelBtn = getView().findViewById(R.id.url_cancel_btn);
-        errorTxt = getView().findViewById(R.id.new_url_error_txt);
+        enterTxt = getView().findViewById(R.id.enter_text_edittext);
+        confirmBtn = getView().findViewById(R.id.text_confirm_btn);
+        cancelBtn = getView().findViewById(R.id.text_cancel_btn);
+        errorTxt = getView().findViewById(R.id.txt_error_msg);
         errorTxt.setVisibility(View.GONE);
     }
 
-    private Boolean verifyInput(){
-        String urlInput = String.valueOf(urlTxt.getText());
-
-        return !urlInput.equals("");
+    private Boolean verifyInput(String input){
+        return !input.equals("");
     }
 
     private void setListeners(){
@@ -86,12 +82,12 @@ public class AddUrlFragment extends Fragment {
     }
 
     private void onConfirmClicked(){
-        UrlHandler urlHandler = new UrlHandler();
+        String inputTxt = enterTxt.getText().toString();
 
-        if(verifyInput()){
-            Url newUrl = new Url(UUID.randomUUID().toString(), urlTxt.getText().toString());
-            fragmentHandler.createNewUrl(newUrl);
+        if(verifyInput(inputTxt)){
+            fragmentHandler.createNew(inputTxt);
         }else{
+            errorTxt.setText(errorCode);
             errorTxt.setVisibility(View.VISIBLE);
 
             Handler handler = new Handler();

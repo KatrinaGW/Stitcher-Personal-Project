@@ -24,9 +24,10 @@ import com.example.stitcher.models.Url;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.function.Function;
 
-public class DisplayProject extends AppCompatActivity implements AddUrlFragment.AddUrlFragmentHandler {
+public class DisplayProject extends AppCompatActivity implements EnterTextFragment.EnterTextFragmentHandler {
     UrlsArrayAdapter urlsArrayAdapter;
     CounterArrayAdapter counterArrayAdapter;
     ListView urlsListView;
@@ -39,6 +40,7 @@ public class DisplayProject extends AppCompatActivity implements AddUrlFragment.
     Button newUrlBtn;
     FloatingActionButton deleteUrlBtn;
     TextView countersHeader;
+    TextView urlsHeader;
     private boolean deletingURL;
 
     @Override
@@ -125,13 +127,21 @@ public class DisplayProject extends AppCompatActivity implements AddUrlFragment.
             public void onClick(View v) {
                 countersListView.setVisibility(View.GONE);
                 urlsListView.setVisibility(View.GONE);
-                backBtn.setVisibility(View.GONE);
-                newCounterBtn.setVisibility(View.GONE);
+                backBtn.setEnabled(false);
+                newCounterBtn.setEnabled(false);
+                countersHeader.setVisibility(View.GONE);
+                urlsHeader.setVisibility(View.GONE);
                 deleteUrlBtn.setVisibility(View.GONE);
-                newUrlBtn.setVisibility(View.GONE);
+                newUrlBtn.setEnabled(false);
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(ViewConstants.FRAGMENT_ERROR_MSG.getValue(), R.string.url_error_msg);
+                EnterTextFragment fragment = new EnterTextFragment();
+                fragment.setArguments(bundle);
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .add(R.id.add_url_fragment_container, AddUrlFragment.class, null)
+                        .add(R.id.add_url_fragment_container, EnterTextFragment.class, null)
+                        .replace(R.id.add_url_fragment_container, fragment, null)
                         .commit();
             }
         });
@@ -212,6 +222,7 @@ public class DisplayProject extends AppCompatActivity implements AddUrlFragment.
         newUrlBtn = findViewById(R.id.add_url_to_proj_btn);
         deleteUrlBtn = findViewById(R.id.delete_url_fab);
         countersHeader = findViewById(R.id.counters_header_text);
+        urlsHeader = findViewById(R.id.urls_header_txt);
         setAdapters();
         setListeners();
     }
@@ -220,18 +231,21 @@ public class DisplayProject extends AppCompatActivity implements AddUrlFragment.
     public void dismissFragment() {
         countersListView.setVisibility(View.VISIBLE);
         urlsListView.setVisibility(View.VISIBLE);
-        backBtn.setVisibility(View.VISIBLE);
-        newCounterBtn.setVisibility(View.VISIBLE);
+        backBtn.setEnabled(true);
+        newCounterBtn.setEnabled(true);
         deleteUrlBtn.setVisibility(View.VISIBLE);
-        newUrlBtn.setVisibility(View.VISIBLE);
+        newUrlBtn.setEnabled(true);
+        countersHeader.setVisibility(View.VISIBLE);
+        urlsHeader.setVisibility(View.VISIBLE);
 
         getSupportFragmentManager().beginTransaction().
                 remove(getSupportFragmentManager().findFragmentById(R.id.add_url_fragment_container)).commit();
     }
 
     @Override
-    public void createNewUrl(Url newUrl){
+    public void createNew(String input){
         UrlHandler urlHandler = new UrlHandler();
+        Url newUrl = new Url(UUID.randomUUID().toString(), input);
 
         urlHandler.createNewUrl(newUrl, project)
                 .thenAccept(success -> {

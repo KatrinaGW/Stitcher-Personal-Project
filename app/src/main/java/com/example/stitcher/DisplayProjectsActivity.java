@@ -13,12 +13,9 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stitcher.controllers.ProjectsCollection;
-import com.example.stitcher.controllers.UrlCollection;
 import com.example.stitcher.controllers.array_adapters.ProjectsArrayAdapter;
-import com.example.stitcher.controllers.array_adapters.UrlsArrayAdapter;
 import com.example.stitcher.models.DatabaseObject;
 import com.example.stitcher.models.Project;
-import com.example.stitcher.models.Url;
 
 import java.util.ArrayList;
 
@@ -27,11 +24,12 @@ public class DisplayProjectsActivity extends AppCompatActivity {
     ProjectsArrayAdapter projectsArrayAdapter;
     ListView projectsListview;
     Button backBtn;
+    Button newProjectBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.display_strings);
+        setContentView(R.layout.display_projects);
 
     }
 
@@ -44,6 +42,7 @@ public class DisplayProjectsActivity extends AppCompatActivity {
     private void init(){
         projectsListview = findViewById(R.id.strings_listview);
         backBtn = findViewById(R.id.strings_back_btn);
+        newProjectBtn = findViewById(R.id.new_project_btn);
         setProjectsArrayAdapter();
         setListeners();
     }

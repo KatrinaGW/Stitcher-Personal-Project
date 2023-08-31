@@ -18,4 +18,8 @@
     <string name="counter_label_txt">Counter Label:</string>
     <string name="saved_msg_text">Saved!</string>
     <string name="delete_url">Delete Url</string>
+    <string name="add_url_txt_msg">URL</string>
+    <string name="project_name_msg">Project Name</string>
+    <string name="url_error_msg">Please enter a URL!</string>
+    <string name="project_name_error_msg">Please enter a Project Name!</string>
 </resources>

@@ -28,7 +28,7 @@ public class DisplayUrlsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.display_strings);
+        setContentView(R.layout.display_projects);
 
     }
 

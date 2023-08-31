@@ -12,15 +12,15 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/add_url_edittext"
+            android:id="@+id/enter_text_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="URL"
+            android:hint="@string/add_url_txt_msg"
             android:textColor="@color/white"
             android:textSize="16pt" />
 
         <TextView
-            android:id="@+id/new_url_error_txt"
+            android:id="@+id/txt_error_msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="10pt"
@@ -35,14 +35,14 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/url_confirm_btn"
+                android:id="@+id/text_confirm_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Confirm" />
 
             <Button
-                android:id="@+id/url_cancel_btn"
+                android:id="@+id/text_cancel_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

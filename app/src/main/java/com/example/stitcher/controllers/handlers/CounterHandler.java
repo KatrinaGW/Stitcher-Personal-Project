@@ -1,5 +1,9 @@
 package com.example.stitcher.controllers.handlers;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
+
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.ProjectsCollection;
 import com.example.stitcher.models.Counter;
@@ -12,6 +16,54 @@ import java.util.function.Function;
 public class CounterHandler {
     private CounterCollection counterCollection = new CounterCollection();
     private ProjectsCollection projectsCollection = new ProjectsCollection();
+
+    public CompletableFuture<Boolean> deleteCounter(Counter counter, Project parentProject){
+        parentProject.removeCounter(counter.getId());
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+        ArrayList<Throwable> errors = new ArrayList<>();
+
+        CompletableFuture futureCounter = CompletableFuture.supplyAsync(() ->
+                counterCollection.deleteRecord(counter.getId())
+                        .thenAccept(success -> {
+                            if(!success){
+                                errors.add(new Exception("Something went wrong when deleting the counter!"));
+                            }
+                        })
+                        .exceptionally(new Function<Throwable, Void>() {
+                            @Override
+                            public Void apply(Throwable throwable) {
+                                errors.add(throwable);
+                                Log.e(TAG, "ERROR", throwable);
+                                return null;
+                            }
+                        })
+        );
+
+        CompletableFuture futureProject = CompletableFuture.supplyAsync(() ->
+                projectsCollection.removeCounterid(parentProject.getId(), counter.getId())
+                        .thenAccept(success -> {
+                            if(!success){
+                                errors.add(new Exception("Something went wrong when removing the counter from the project!"));
+                            }
+                        }).exceptionally(new Function<Throwable, Void>() {
+                            @Override
+                            public Void apply(Throwable throwable) {
+                                Log.e(TAG, "ERROR", throwable);
+                                errors.add(throwable);
+                                return null;
+                            }
+                        })
+        );
+
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureCounter, futureProject);
+
+        allFutures.thenRun(() -> {
+            cf.complete(errors.size()==0);
+        });
+
+
+        return cf;
+    }
 
     public CompletableFuture<Boolean> createNewCounter(Counter counter, Project parentProject){
         parentProject.addCounterId(counter.getId());
