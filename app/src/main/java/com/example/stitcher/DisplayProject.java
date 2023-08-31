@@ -157,9 +157,7 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
 
                     startActivity(urlIntent);
                 }else{
-                    UrlHandler urlHandler = new UrlHandler();
-
-                    urlHandler.deleteUrl(clickedUrl, project)
+                    UrlHandler.deleteUrl(clickedUrl, project)
                             .thenAccept(success ->
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -243,10 +241,9 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
 
     @Override
     public void createNew(String input){
-        UrlHandler urlHandler = new UrlHandler();
         Url newUrl = new Url(UUID.randomUUID().toString(), input);
 
-        urlHandler.createNewUrl(newUrl, project)
+        UrlHandler.createNewUrl(newUrl, project)
                 .thenAccept(success -> {
                     runOnUiThread(new Runnable() {
                         @Override

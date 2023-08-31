@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class ProjectHandler {
-    public CompletableFuture<Boolean> createNewProject(Project project){
+    public static CompletableFuture<Boolean> createNewProject(Project project){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 
         ProjectsCollection.getInstance().insertRecord(project.getId(), project)
@@ -31,7 +31,7 @@ public class ProjectHandler {
         return cf;
     }
 
-    public CompletableFuture<Boolean> updateProjectName(Project project){
+    public static CompletableFuture<Boolean> updateProjectName(Project project){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 
         ProjectsCollection.getInstance().updateName(project.getId(), project.getName())
@@ -48,7 +48,7 @@ public class ProjectHandler {
         return cf;
     }
 
-    public CompletableFuture<Boolean> deleteProject(Project project){
+    public static CompletableFuture<Boolean> deleteProject(Project project){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
         ArrayList<CompletableFuture> cfs = new ArrayList<>();

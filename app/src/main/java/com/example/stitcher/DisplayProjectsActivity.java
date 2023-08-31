@@ -91,9 +91,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
 
                     startActivity(projectIntent);
                 }else if(currentAction.equals(Actions.DELETING.getValue())){
-                    ProjectHandler projectHandler = new ProjectHandler();
-
-                    projectHandler.deleteProject(clickedProject)
+                    ProjectHandler.deleteProject(clickedProject)
                             .thenAccept(success ->
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -199,10 +197,8 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
 
     @Override
     public void createNew(String input) {
-        ProjectHandler projectHandler = new ProjectHandler();
-
         if(currentAction.equals(Actions.ADDING.getValue())){
-            projectHandler.createNewProject(new Project(UUID.randomUUID().toString(), input))
+            ProjectHandler.createNewProject(new Project(UUID.randomUUID().toString(), input))
                     .thenAccept(success ->
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -225,7 +221,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
         }else if(currentAction.equals(Actions.UPDATING.getValue())){
             clickedProject.setName(input);
 
-            projectHandler.updateProjectName(clickedProject)
+            ProjectHandler.updateProjectName(clickedProject)
                     .thenAccept(success ->
                             runOnUiThread(new Runnable() {
                                 @Override

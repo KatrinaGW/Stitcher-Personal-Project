@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class UrlHandler {
-    public CompletableFuture<Boolean> deleteUrl(Url url, Project parentProject){
+    public static CompletableFuture<Boolean> deleteUrl(Url url, Project parentProject){
         parentProject.removeUrl(url.getId());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
@@ -62,7 +62,7 @@ public class UrlHandler {
         return cf;
     }
 
-    public CompletableFuture<Boolean> createNewUrl(Url url, Project parentProject){
+    public static CompletableFuture<Boolean> createNewUrl(Url url, Project parentProject){
         parentProject.addUrlId(url.getId());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();

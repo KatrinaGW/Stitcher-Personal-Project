@@ -110,9 +110,7 @@ public class StitchCounterActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    CounterHandler counterHandler = new CounterHandler();
-
-                    counterHandler.deleteCounter(counter, parentProject)
+                    CounterHandler.deleteCounter(counter, parentProject)
                             .thenAccept(success ->
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -159,9 +157,7 @@ public class StitchCounterActivity extends AppCompatActivity {
                                     }
                                 });
                     }else{
-                        CounterHandler counterHandler = new CounterHandler();
-
-                        counterHandler.createNewCounter(counter, parentProject)
+                        CounterHandler.createNewCounter(counter, parentProject)
                                         .thenAccept(success -> {
                                             runOnUiThread(new Runnable() {
                                                 @Override

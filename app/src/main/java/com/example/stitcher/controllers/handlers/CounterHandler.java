@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class CounterHandler {
-    public CompletableFuture<Boolean> deleteCounter(Counter counter, Project parentProject){
+    public static CompletableFuture<Boolean> deleteCounter(Counter counter, Project parentProject){
         parentProject.removeCounter(counter.getId());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
@@ -62,7 +62,7 @@ public class CounterHandler {
         return cf;
     }
 
-    public CompletableFuture<Boolean> createNewCounter(Counter counter, Project parentProject){
+    public static CompletableFuture<Boolean> createNewCounter(Counter counter, Project parentProject){
         parentProject.addCounterId(counter.getId());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
