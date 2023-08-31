@@ -10,7 +10,7 @@
         android:id="@+id/projects_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="2"
+        android:weightSum="3"
         android:orientation="horizontal">
 
         <Button
@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_weight="1.6"
+            android:layout_weight="1.8"
             android:text="New Project" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -30,12 +30,24 @@
             android:contentDescription="@string/delete_project"
             app:srcCompat="@android:drawable/ic_menu_delete"
             android:focusable="true"
-            android:layout_weight="0.4"
+            android:layout_weight="0.6"
+            app:fabSize="mini" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/edit_project_fab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/url_background"
+            android:clickable="true"
+            android:contentDescription="@string/delete_project"
+            app:srcCompat="@android:drawable/ic_menu_edit"
+            android:focusable="true"
+            android:layout_weight="0.6"
             app:fabSize="mini" />
     </LinearLayout>
 
         <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/new_project_fragment_container"
+        android:id="@+id/project_name_fragment_container"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

@@ -35,6 +35,23 @@ public class ProjectHandler {
         return cf;
     }
 
+    public CompletableFuture<Boolean> updateProjectName(Project project){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        projectsCollection.updateName(project.getId(), project.getName())
+                .thenAccept(success -> cf.complete(success))
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, "ERROR", throwable);
+                        cf.completeExceptionally(throwable);
+                        return null;
+                    }
+                });
+
+        return cf;
+    }
+
     public CompletableFuture<Boolean> deleteProject(Project project){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();

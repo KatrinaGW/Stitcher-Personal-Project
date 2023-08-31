@@ -166,6 +166,29 @@ public class ProjectsCollection implements Database{
         return cf;
     }
 
+    public CompletableFuture<Boolean> updateName(String id, String newName){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
+            collection.document(id)
+                    .update(Constants.PROJECT_NAME_FIELD.getValue(), newName)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            cf.complete(true);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            cf.completeExceptionally(e);
+                        }
+                    });
+        });
+
+        return cf;
+    }
+
     @Override
     public CompletableFuture<Boolean> updateRecord(String id, DatabaseObject obj){
         Project project = (Project) obj;
