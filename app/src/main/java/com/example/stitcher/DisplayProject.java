@@ -25,7 +25,7 @@ import com.example.stitcher.models.Url;
 
 import java.util.ArrayList;
 
-public class DisplayProject extends AppCompatActivity {
+public class DisplayProject extends AppCompatActivity implements AddUrlFragment.AddUrlFragmentDismisser {
     UrlsArrayAdapter urlsArrayAdapter;
     CounterArrayAdapter counterArrayAdapter;
     ListView urlsListView;
@@ -109,6 +109,21 @@ public class DisplayProject extends AppCompatActivity {
             }
         });
 
+        newUrlBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countersListView.setVisibility(View.GONE);
+                urlsListView.setVisibility(View.GONE);
+                backBtn.setVisibility(View.GONE);
+                newCounterBtn.setVisibility(View.GONE);
+                newUrlBtn.setVisibility(View.GONE);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.add_url_fragment_container, AddUrlFragment.class, null)
+                        .commit();
+            }
+        });
+
         urlsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -144,5 +159,17 @@ public class DisplayProject extends AppCompatActivity {
         newUrlBtn = findViewById(R.id.add_url_to_proj_btn);
         setAdapters();
         setListeners();
+    }
+
+    @Override
+    public void dismissFragment() {
+        countersListView.setVisibility(View.VISIBLE);
+        urlsListView.setVisibility(View.VISIBLE);
+        backBtn.setVisibility(View.VISIBLE);
+        newCounterBtn.setVisibility(View.VISIBLE);
+        newUrlBtn.setVisibility(View.VISIBLE);
+
+        getSupportFragmentManager().beginTransaction().
+                remove(getSupportFragmentManager().findFragmentById(R.id.add_url_fragment_container)).commit();
     }
 }
