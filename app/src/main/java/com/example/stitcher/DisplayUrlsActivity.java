@@ -61,7 +61,6 @@ public class DisplayUrlsActivity extends AppCompatActivity {
 
     private void init(){
         urlsListview = findViewById(R.id.strings_listview);
-        backBtn = findViewById(R.id.strings_back_btn);
         setUrlsArrayAdapter();
         setListeners();
     }

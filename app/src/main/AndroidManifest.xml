@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Stitcher"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".DisplayProjectsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,6 @@
         <activity android:name=".CountersActivity" />
         <activity android:name=".UrlWebviewActivity"/>
         <activity android:name=".DisplayUrlsActivity"/>
-        <activity android:name=".DisplayProjectsActivity"/>
         <activity android:name=".DisplayProject"/>
     </application>
 

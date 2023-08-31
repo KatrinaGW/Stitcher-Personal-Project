@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.DatabaseObject;
 import com.example.stitcher.models.Project;
+import com.example.stitcher.models.Url;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,6 +24,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class ProjectsCollection implements Database{
@@ -231,11 +234,58 @@ public class ProjectsCollection implements Database{
 
     @Override
     public CompletableFuture<Boolean> insertRecord(String id, DatabaseObject obj) {
-        return null;
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        Project project = (Project) obj;
+
+        Map<String, Object> projectMap = new HashMap<>();
+        projectMap.put("id", project.getId());
+        projectMap.put(Constants.PROJECT_COUNTERS_FIELD.getValue(), project.getCounterIds());
+        projectMap.put(Constants.PROJECT_URLS_FIELD.getValue(), project.getUrlIds());
+        projectMap.put(Constants.PROJECT_NAME_FIELD.getValue(), project.getName());
+
+        collection.document(project.getId())
+                .set(projectMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        cf.complete(true);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                        cf.completeExceptionally(e);
+                    }
+                });
+
+        return cf;
     }
 
     @Override
     public CompletableFuture<Boolean> deleteRecord(String id) {
-        return null;
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        collection.document(id)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(TAG, "Document successfully deleted");
+                        cf.complete(true);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Document failed to delete");
+                        Log.e(TAG, e.getMessage());
+                        cf.completeExceptionally(e);
+                    }
+                });
+
+        return cf;
     }
 }

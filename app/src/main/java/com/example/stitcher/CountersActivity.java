@@ -87,7 +87,6 @@ public class CountersActivity extends AppCompatActivity {
 
     private void init(){
         countersListView = findViewById(R.id.strings_listview);
-        backBtn = findViewById(R.id.strings_back_btn);
         setCountersArrayAdapter();
         setButtons();
         setOnItemClickedListener();

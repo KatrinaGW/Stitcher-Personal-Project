@@ -136,6 +136,7 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
 
                 Bundle bundle = new Bundle();
                 bundle.putInt(ViewConstants.FRAGMENT_ERROR_MSG.getValue(), R.string.url_error_msg);
+                bundle.putInt(ViewConstants.FRAGMENT_HINT_MSG.getValue(), R.string.add_url_txt_msg);
                 EnterTextFragment fragment = new EnterTextFragment();
                 fragment.setArguments(bundle);
                 getSupportFragmentManager()

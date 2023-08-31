@@ -21,6 +21,7 @@ public class EnterTextFragment extends Fragment {
     EnterTextFragmentHandler fragmentHandler;
     TextView errorTxt;
     int errorCode;
+    int hintCode;
 
     interface EnterTextFragmentHandler {
         void dismissFragment();
@@ -32,6 +33,7 @@ public class EnterTextFragment extends Fragment {
                              Bundle savedInstanceState){
         super.onCreateView(inflater, container, savedInstanceState);
         errorCode = this.getArguments().getInt(ViewConstants.FRAGMENT_ERROR_MSG.getValue());
+        hintCode = this.getArguments().getInt(ViewConstants.FRAGMENT_HINT_MSG.getValue());
 
         return inflater.inflate(R.layout.fragment_enter_text,
                 container, false);
@@ -55,6 +57,7 @@ public class EnterTextFragment extends Fragment {
 
     private void init(){
         enterTxt = getView().findViewById(R.id.enter_text_edittext);
+        enterTxt.setHint(hintCode);
         confirmBtn = getView().findViewById(R.id.text_confirm_btn);
         cancelBtn = getView().findViewById(R.id.text_cancel_btn);
         errorTxt = getView().findViewById(R.id.txt_error_msg);
