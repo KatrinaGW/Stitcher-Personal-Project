@@ -24,9 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name="StitchCounterActivity" />
-        <activity android:name=".CountersActivity" />
         <activity android:name=".UrlWebviewActivity"/>
-        <activity android:name=".DisplayUrlsActivity"/>
         <activity android:name=".DisplayProject"/>
     </application>
 

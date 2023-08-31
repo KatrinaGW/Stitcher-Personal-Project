@@ -110,24 +110,6 @@ public class StitchCounterActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(parentProject==null){
-                    CounterCollection counterCollectionConnection = new CounterCollection();
-                    counterCollectionConnection.deleteRecord(counter.getId())
-                            .thenAccept(success -> {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        startActivity(new Intent(StitchCounterActivity.this, MainActivity.class));
-                                    }
-                                });
-                            })
-                            .exceptionally(new Function<Throwable, Void>() {
-                                @Override
-                                public Void apply(Throwable throwable) {
-                                    return null;
-                                }
-                            });
-                }else{
                     CounterHandler counterHandler = new CounterHandler();
 
                     counterHandler.deleteCounter(counter, parentProject)
@@ -151,7 +133,7 @@ public class StitchCounterActivity extends AppCompatActivity {
                                     return null;
                                 }
                             });
-                }
+
             }
         });
 
@@ -244,13 +226,10 @@ public class StitchCounterActivity extends AppCompatActivity {
     }
 
     private void onBackClicked(){
-        if(parentProject == null){
-            startActivity(new Intent(StitchCounterActivity.this, MainActivity.class));
-        }else{
             Intent newIntent = new Intent(StitchCounterActivity.this, DisplayProject.class);
             newIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), parentProject);
             startActivity(newIntent);
-        }
+
 
     }
 
