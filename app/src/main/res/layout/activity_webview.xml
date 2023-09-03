@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -10,9 +12,72 @@
         android:layout_height="wrap_content"
         android:text="Back" />
 
-    <WebView android:id="@+id/myWebView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
-    </WebView>
+        <WebView
+            android:id="@+id/myWebView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/counters_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="20dp"
+            app:fabSize="mini"
+            android:clickable="true"
+            app:srcCompat="@android:drawable/ic_menu_more"
+            android:contentDescription="@string/see_counters"
+            android:focusable="true" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/counters_add_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginVertical="80dp"
+            android:layout_marginHorizontal="16dp"
+            android:clickable="true"
+            app:srcCompat="@android:drawable/ic_menu_add"
+            android:contentDescription="Add to Counter"
+            android:focusable="true" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/counters_sub_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="150dp"
+            android:clickable="true"
+            android:contentDescription="Add to Counter"
+            android:focusable="true"
+            app:srcCompat="@drawable/circled_minus_sign" />
+
+        <FrameLayout
+            android:id="@+id/project_counters_frame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/rounded_background"> <!-- Use the custom drawable here -->
+
+<!--            <androidx.fragment.app.FragmentContainerView-->
+<!--                android:id="@+id/choose_counter_fragment_container"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_marginHorizontal="10dp"-->
+<!--                android:layout_marginVertical="10dp"-->
+<!--                android:layout_height="match_parent" />-->
+
+        </FrameLayout>
+
+
+</RelativeLayout>
+
+
 </LinearLayout>

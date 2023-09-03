@@ -154,6 +154,7 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
                     Intent urlIntent = new Intent(DisplayProject.this, UrlWebviewActivity.class);
                     urlIntent.putExtra(ViewConstants.SELECTED_URL.getValue(), clickedUrl);
                     urlIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), project);
+                    urlIntent.putParcelableArrayListExtra(ViewConstants.FRAGMENT_PROJECT_COUNTERS.getValue(), counters);
 
                     startActivity(urlIntent);
                 }else{

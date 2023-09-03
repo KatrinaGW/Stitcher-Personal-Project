@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/url_background"
             android:clickable="true"
-            android:contentDescription="@string/delete_project"
+            android:contentDescription="@string/edit_project_name"
             app:srcCompat="@android:drawable/ic_menu_edit"
             android:focusable="true"
             android:layout_weight="0.6"

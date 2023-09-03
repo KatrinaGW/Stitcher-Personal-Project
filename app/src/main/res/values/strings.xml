@@ -23,4 +23,6 @@
     <string name="url_error_msg">Please enter a URL!</string>
     <string name="project_name_error_msg">Please enter a Project Name!</string>
     <string name="delete_project">Delete Project</string>
+    <string name="edit_project_name">Edit Project Name</string>
+    <string name="see_counters">See Counters</string>
 </resources>
