@@ -1,6 +1,7 @@
 package com.example.stitcher;
 
 public enum ViewConstants {
+    BACK_NAVIGATE_URL("back_navigate_url"),
     FRAGMENT_PROJECT_COUNTERS("project_counters"),
     FRAGMENT_ERROR_MSG("error_msg"),
     FRAGMENT_EXISTING_STRING("fragment_text_value"),

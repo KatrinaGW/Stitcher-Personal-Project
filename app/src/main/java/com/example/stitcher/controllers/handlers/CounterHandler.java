@@ -14,6 +14,41 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class CounterHandler {
+
+    public static CompletableFuture<Boolean> saveCounterState(Counter counter){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        CounterCollection.getInstance().updateRecord(counter.getId(), counter)
+                .thenAccept(success ->{
+                    if(success){
+                        cf.complete(true);
+                    }else{
+                        cf.completeExceptionally(
+                                new Exception("Something went wrong when saving the counter!")
+                        );
+                    }
+                })
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        cf.completeExceptionally(throwable);
+                        return null;
+                    }
+                });
+
+        return cf;
+    }
+
+    public static boolean handleCounterValueChange(Counter counter, int addend){
+        boolean success = false;
+
+        if(counter.getCount() + addend > -1){
+            counter.addToCount(addend);
+            success = true;
+        }
+
+        return success;
+    }
     public static CompletableFuture<Boolean> deleteCounter(Counter counter, Project parentProject){
         parentProject.removeCounter(counter.getId());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();

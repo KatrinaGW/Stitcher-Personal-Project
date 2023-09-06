@@ -22,7 +22,9 @@ import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.handlers.CounterHandler;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.Project;
+import com.example.stitcher.models.Url;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -41,6 +43,7 @@ public class StitchCounterActivity extends AppCompatActivity {
     private Counter counter;
     private Project parentProject;
     private boolean isNew;
+    private Url backNavigateUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public class StitchCounterActivity extends AppCompatActivity {
         }
 
         parentProject = intent.getParcelableExtra(ViewConstants.PARENT_PROJECT.getValue());
+        backNavigateUrl = intent.getParcelableExtra(ViewConstants.BACK_NAVIGATE_URL.getValue());
     }
 
     @Override
@@ -140,7 +144,7 @@ public class StitchCounterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(verifyInput()){
                     if(!isNew){
-                        CounterCollection.getInstance().updateRecord(counter.getId(), counter)
+                        CounterHandler.saveCounterState(counter)
                                 .thenAccept(success -> {
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -221,8 +225,16 @@ public class StitchCounterActivity extends AppCompatActivity {
     }
 
     private void onBackClicked(){
-        Intent newIntent = new Intent(StitchCounterActivity.this, DisplayProject.class);
-        newIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), parentProject);
+        Intent newIntent;
+        if(backNavigateUrl == null){
+            newIntent = new Intent(StitchCounterActivity.this, DisplayProject.class);
+            newIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), parentProject);
+        }else{
+            newIntent = new Intent(StitchCounterActivity.this, UrlWebviewActivity.class);
+            newIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), parentProject);
+            newIntent.putExtra(ViewConstants.SELECTED_URL.getValue(), backNavigateUrl);
+        }
+
         startActivity(newIntent);
     }
 
@@ -263,21 +275,7 @@ public class StitchCounterActivity extends AppCompatActivity {
 
     private void setCountText(){
         countText.setText(Integer.toString(counter.getCount()));
-        checkCount();
-    }
-
-    private void checkCount(){
-        if(counter.getCount() == counter.getGoal()){
-            countText.setTextColor(Color.GREEN);
-        }
-
-        if(counter.getCount() > counter.getGoal()){
-            countText.setTextColor(Color.RED);
-        }
-
-        if(counter.getCount() < counter.getGoal()){
-            countText.setTextColor(Color.BLACK);
-        }
+        countText.setTextColor(HelperFunctions.getCounterColourCode(counter));
     }
 
 }

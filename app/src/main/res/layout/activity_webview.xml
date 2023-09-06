@@ -6,11 +6,26 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
     <Button
         android:id="@+id/webview_back_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Back" />
+
+    <TextView
+        android:id="@+id/webview_saved"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="20dp"
+
+        android:text="@string/saved_msg_text" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -20,44 +35,87 @@
         <WebView
             android:id="@+id/myWebView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" >
+
+        </WebView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/counters_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginVertical="16dp"
             android:layout_marginHorizontal="20dp"
-            app:fabSize="mini"
+            android:layout_marginVertical="16dp"
             android:clickable="true"
-            app:srcCompat="@android:drawable/ic_menu_more"
             android:contentDescription="@string/see_counters"
-            android:focusable="true" />
+            android:focusable="true"
+            app:backgroundTint="#743ED5"
+            app:fabSize="mini"
+            app:srcCompat="@android:drawable/ic_menu_more" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/counter_webview_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="60dp"
+            android:clickable="true"
+            app:backgroundTint="#743ED5"
+            app:fabSize="mini"
+            app:srcCompat="@android:drawable/ic_menu_save" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/counter_webview_edit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="105dp"
+            app:fabSize="mini"
+            app:backgroundTint="#743ED5"
+            android:clickable="true"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/counters_add_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginVertical="80dp"
             android:layout_marginHorizontal="16dp"
-            android:clickable="true"
-            app:srcCompat="@android:drawable/ic_menu_add"
-            android:contentDescription="Add to Counter"
-            android:focusable="true" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/counters_sub_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="150dp"
+            android:layout_below="@id/counter_webview_edit_btn"
             android:clickable="true"
             android:contentDescription="Add to Counter"
             android:focusable="true"
+            app:backgroundTint="#743ED5"
+            app:srcCompat="@android:drawable/ic_menu_add" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/counters_subtract_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/counters_add_fab"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            app:backgroundTint="#743ED5"
             app:srcCompat="@drawable/circled_minus_sign" />
+
+        <TextView
+            android:id="@+id/counter_value_txt"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/counters_subtract_fab"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/filled_circle"
+            android:text="18"
+            android:textAlignment="center"
+            android:paddingVertical="10dp"
+            android:textColor="@color/black"
+            android:textSize="24dp" />
 
         <FrameLayout
             android:id="@+id/project_counters_frame"
@@ -67,12 +125,12 @@
             android:layout_centerInParent="true"
             android:background="@drawable/rounded_background"> <!-- Use the custom drawable here -->
 
-<!--            <androidx.fragment.app.FragmentContainerView-->
-<!--                android:id="@+id/choose_counter_fragment_container"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_marginHorizontal="10dp"-->
-<!--                android:layout_marginVertical="10dp"-->
-<!--                android:layout_height="match_parent" />-->
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/choose_counter_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
+                android:layout_height="match_parent" />
 
         </FrameLayout>
 
