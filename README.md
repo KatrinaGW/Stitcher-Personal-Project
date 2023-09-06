@@ -18,4 +18,6 @@ I've tried existing apps, but they still aren't exactly what I wanted. So, I am 
 
  ## TODO Features
  - Add the ability to keep notes for each project
+ - Add the ability to mark the status of a project
+ - Add an archived projects tab
  - Improve the UI
