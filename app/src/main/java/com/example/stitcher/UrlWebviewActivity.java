@@ -2,7 +2,10 @@ package com.example.stitcher;
 
 import static android.content.ContentValues.TAG;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.handlers.CounterHandler;
@@ -102,6 +106,8 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         addCounterBtn.setVisibility(View.GONE);
         subtractCounterBtn.setVisibility(View.GONE);
         counterValueTxt.setVisibility(View.GONE);
+
+        handleCountersBtnImage();
     }
 
     private void setListeners(){
@@ -192,6 +198,21 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         });
     }
 
+    private void handleCountersBtnImage(){
+        if(countersFragmentVisible){
+            countersBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circled_x));
+        }
+
+        if(!countersFragmentVisible && chosenCounter != null){
+            countersBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circled_back_arrow));
+        }
+
+        if(!countersFragmentVisible && chosenCounter == null){
+            countersBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circled_down_arrow));
+
+        }
+    }
+
     private void handleCountChange(int changeValue){
         boolean validCount = CounterHandler.handleCounterValueChange(chosenCounter, changeValue);
 
@@ -212,6 +233,7 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         counterValueTxt.setVisibility(chosenCounter == null  ? View.GONE : View.VISIBLE);
         saveBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         editBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
+        handleCountersBtnImage();
 
         if(counterValueTxt.getVisibility() == View.VISIBLE){
             handleCounterValue();
