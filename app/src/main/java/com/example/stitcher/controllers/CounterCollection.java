@@ -113,7 +113,6 @@ public class CounterCollection implements Database{
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureCount, futureGoal, futureName);
 
         allFutures.thenRun(() -> {
-            System.out.println("Finished");
             cf.complete(errors.size()==0);
         });
 
@@ -190,11 +189,14 @@ public class CounterCollection implements Database{
             searchIds.add(id.trim());
         }
 
+        if(searchIds.size() == 0){
+            cf.complete(counters);
+        }
+
         CompletableFuture.runAsync(() -> {
             collection.whereIn(FieldPath.documentId(),searchIds)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
-                        System.out.println(queryDocumentSnapshots.getDocuments().size());
                         for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
                             Log.d(TAG, "Turning document into Counter");
                             Counter newCounter = documentSnapshotToCounter(document);

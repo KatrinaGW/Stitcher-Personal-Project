@@ -40,12 +40,26 @@
         </WebView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_counter_webview_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="15dp"
+            android:clickable="true"
+            android:contentDescription="@string/see_counters"
+            android:focusable="true"
+            app:backgroundTint="#743ED5"
+            app:fabSize="mini"
+            app:srcCompat="@android:drawable/ic_menu_add" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/counters_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="16dp"
+            android:layout_marginVertical="60dp"
             android:clickable="true"
             android:contentDescription="@string/see_counters"
             android:focusable="true"
@@ -59,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="60dp"
+            android:layout_marginVertical="105dp"
             android:clickable="true"
             app:backgroundTint="#743ED5"
             app:fabSize="mini"
@@ -71,14 +85,15 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="105dp"
+            android:layout_marginTop="150dp"
+            android:layout_marginBottom="50dp"
             app:fabSize="mini"
             app:backgroundTint="#743ED5"
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/counters_add_fab"
+            android:id="@+id/add_to_counter_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -96,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_alignParentEnd="true"
-            android:layout_below="@id/counters_add_fab"
+            android:layout_below="@id/add_to_counter_fab"
             android:layout_marginRight="16dp"
             android:clickable="true"
             app:backgroundTint="#743ED5"

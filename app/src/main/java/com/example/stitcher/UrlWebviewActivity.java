@@ -2,10 +2,7 @@ package com.example.stitcher;
 
 import static android.content.ContentValues.TAG;
 
-import static java.security.AccessController.getContext;
-
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -20,7 +17,6 @@ import androidx.core.content.ContextCompat;
 
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.handlers.CounterHandler;
-import com.example.stitcher.controllers.handlers.ProjectHandler;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.Project;
 import com.example.stitcher.models.Url;
@@ -36,10 +32,11 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
     Button backBtn;
     ArrayList<Counter> counters;
     FloatingActionButton countersBtn;
-    FloatingActionButton addCounterBtn;
+    FloatingActionButton addToCounterBtn;
     FloatingActionButton subtractCounterBtn;
     FloatingActionButton saveBtn;
     FloatingActionButton editBtn;
+    FloatingActionButton addCounterBtn;
     TextView counterValueTxt;
     TextView savedTxt;
     FrameLayout countersFrame;
@@ -96,14 +93,15 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         savedTxt.setVisibility(View.GONE);
         countersFrame.setVisibility(View.GONE);
         countersFragmentVisible = false;
+        addCounterBtn = findViewById(R.id.add_counter_webview_fab);
         saveBtn = findViewById(R.id.counter_webview_save);
-        addCounterBtn = findViewById(R.id.counters_add_fab);
+        addToCounterBtn = findViewById(R.id.add_to_counter_fab);
         subtractCounterBtn = findViewById(R.id.counters_subtract_fab);
         counterValueTxt = findViewById(R.id.counter_value_txt);
         editBtn = findViewById(R.id.counter_webview_edit_btn);
         editBtn.setVisibility(View.GONE);
         saveBtn.setVisibility(View.GONE);
-        addCounterBtn.setVisibility(View.GONE);
+        addToCounterBtn.setVisibility(View.GONE);
         subtractCounterBtn.setVisibility(View.GONE);
         counterValueTxt.setVisibility(View.GONE);
 
@@ -148,10 +146,21 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
             }
         });
 
-        addCounterBtn.setOnClickListener(new View.OnClickListener() {
+        addToCounterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleCountChange(1);
+            }
+        });
+
+        addCounterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent counterIntent = new Intent(UrlWebviewActivity.this, StitchCounterActivity.class);
+                counterIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), parentProject);
+                counterIntent.putExtra(ViewConstants.BACK_NAVIGATE_URL.getValue(), url);
+
+                startActivity(counterIntent);
             }
         });
 
@@ -162,7 +171,6 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
                 counterIntent.putExtra(ViewConstants.SELECTED_COUNTER.getValue(), chosenCounter);
                 counterIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), parentProject);
                 counterIntent.putExtra(ViewConstants.BACK_NAVIGATE_URL.getValue(), url);
-                counterIntent.putParcelableArrayListExtra(ViewConstants.FRAGMENT_PROJECT_COUNTERS.getValue(), counters);
 
                 startActivity(counterIntent);
             }
@@ -223,14 +231,16 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
 
     private void toggleFragmentVisibility(){
         countersFragmentVisible = !countersFragmentVisible;
+
         if(countersFragmentVisible){
             chosenCounter = null;
         }
 
         countersFrame.setVisibility(countersFragmentVisible ? View.VISIBLE : View.GONE);
-        addCounterBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
+        addToCounterBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         subtractCounterBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         counterValueTxt.setVisibility(chosenCounter == null  ? View.GONE : View.VISIBLE);
+        addCounterBtn.setEnabled(chosenCounter == null && !countersFragmentVisible);
         saveBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         editBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         handleCountersBtnImage();
