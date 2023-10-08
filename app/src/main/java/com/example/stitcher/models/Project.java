@@ -11,19 +11,21 @@ public class Project extends DatabaseObject implements Parcelable {
     private ArrayList<String> counterIds;
     private ArrayList<String> urlIds;
     private String name;
+    private String status;
 
-    public Project(String id, String name){
+    public Project(String id, String name, String status){
         super(id);
         counterIds = new ArrayList<>();
         urlIds = new ArrayList<>();
         this.name = name;
+        this.status = status;
     }
 
-    public Project(String id, ArrayList<String> counterIds, ArrayList<String> urlIds, String name){
-        super(id);
+    public Project(String id, ArrayList<String> counterIds, ArrayList<String> urlIds, String name,
+                   String status){
+        this(id, name, status);
         this.counterIds = counterIds;
         this.urlIds = urlIds;
-        this.name = name;
     }
 
     protected Project(Parcel in) {
@@ -31,6 +33,7 @@ public class Project extends DatabaseObject implements Parcelable {
         this.counterIds = in.readArrayList(null);
         this.urlIds = in.readArrayList(null);
         this.name = in.readString();
+        this.status = in.readString();
     }
 
     public String getName(){
@@ -80,6 +83,7 @@ public class Project extends DatabaseObject implements Parcelable {
         dest.writeList(counterIds);
         dest.writeList(urlIds);
         dest.writeString(name);
+        dest.writeString(status);
     }
 
     public static final Creator<Project> CREATOR = new Creator<Project>() {
@@ -93,4 +97,12 @@ public class Project extends DatabaseObject implements Parcelable {
             return new Project[size];
         }
     };
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String newStatus){
+        this.status = newStatus;
+    }
 }

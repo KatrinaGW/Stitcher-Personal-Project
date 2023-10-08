@@ -1,6 +1,7 @@
 package com.example.stitcher.controllers;
 
-public enum Constants {
+public enum CollectionConstants {
+    PROJECT_STATUS_FIELD("status"),
     PROJECT_COLLECTION("Projects"),
     PROJECT_URLS_FIELD("urlIds"),
     PROJECT_COUNTERS_FIELD("counterIds"),
@@ -14,7 +15,7 @@ public enum Constants {
 
     private String value;
 
-    Constants(String valueName) {
+    CollectionConstants(String valueName) {
         this.value = valueName;
     }
 

@@ -2,15 +2,12 @@ package com.example.stitcher.controllers;
 
 import static android.content.ContentValues.TAG;
 
-import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.DatabaseObject;
 import com.example.stitcher.models.Project;
-import com.example.stitcher.models.Url;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,7 +19,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +31,7 @@ public class ProjectsCollection implements Database{
 
     private ProjectsCollection(){
         db = FirebaseFirestore.getInstance();
-        collection = db.collection(Constants.PROJECT_COLLECTION.getValue());
+        collection = db.collection(CollectionConstants.PROJECT_COLLECTION.getValue());
     }
 
     public static ProjectsCollection getInstance(){
@@ -60,13 +56,14 @@ public class ProjectsCollection implements Database{
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d(TAG, document.getId());
                                     ArrayList<String> counterIds = (ArrayList<String>) document.getData()
-                                                                        .get(Constants.PROJECT_COUNTERS_FIELD.getValue());
+                                                                        .get(CollectionConstants.PROJECT_COUNTERS_FIELD.getValue());
                                     ArrayList<String> urlIds = (ArrayList<String>) document.getData()
-                                                                        .get(Constants.PROJECT_URLS_FIELD.getValue());
-                                    String name = (String) document.getData().get(Constants.PROJECT_NAME_FIELD.getValue());
+                                                                        .get(CollectionConstants.PROJECT_URLS_FIELD.getValue());
+                                    String name = (String) document.getData().get(CollectionConstants.PROJECT_NAME_FIELD.getValue());
+                                    String status = (String) document.getData().get(CollectionConstants.PROJECT_STATUS_FIELD.getValue());
                                     String id = document.getId();
 
-                                    Project newProject = new Project(id, counterIds, urlIds, name);
+                                    Project newProject = new Project(id, counterIds, urlIds, name, status);
                                     projects.add(newProject);
                                 }
                                 cf.complete(projects);
@@ -86,7 +83,7 @@ public class ProjectsCollection implements Database{
 
         CompletableFuture.runAsync(() -> {
             collection.document(projectId)
-                    .update(Constants.PROJECT_COUNTERS_FIELD.getValue(), FieldValue.arrayRemove(counterId))
+                    .update(CollectionConstants.PROJECT_COUNTERS_FIELD.getValue(), FieldValue.arrayRemove(counterId))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -110,7 +107,7 @@ public class ProjectsCollection implements Database{
 
         CompletableFuture.runAsync(() -> {
             collection.document(projectId)
-                    .update(Constants.PROJECT_URLS_FIELD.getValue(), FieldValue.arrayRemove(urlId))
+                    .update(CollectionConstants.PROJECT_URLS_FIELD.getValue(), FieldValue.arrayRemove(urlId))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -134,7 +131,7 @@ public class ProjectsCollection implements Database{
 
         CompletableFuture.runAsync(() -> {
             collection.document(id)
-                    .update(Constants.PROJECT_COUNTERS_FIELD.getValue(), FieldValue.arrayUnion(newCounterId))
+                    .update(CollectionConstants.PROJECT_COUNTERS_FIELD.getValue(), FieldValue.arrayUnion(newCounterId))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -157,7 +154,30 @@ public class ProjectsCollection implements Database{
 
         CompletableFuture.runAsync(() -> {
             collection.document(id)
-                    .update(Constants.PROJECT_URLS_FIELD.getValue(), FieldValue.arrayUnion(newUrlId))
+                    .update(CollectionConstants.PROJECT_URLS_FIELD.getValue(), FieldValue.arrayUnion(newUrlId))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            cf.complete(true);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            cf.completeExceptionally(e);
+                        }
+                    });
+        });
+
+        return cf;
+    }
+
+    public CompletableFuture<Boolean> updateStatus(String id, String newStatus){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
+            collection.document(id)
+                    .update(CollectionConstants.PROJECT_STATUS_FIELD.getValue(), newStatus)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -180,7 +200,7 @@ public class ProjectsCollection implements Database{
 
         CompletableFuture.runAsync(() -> {
             collection.document(id)
-                    .update(Constants.PROJECT_NAME_FIELD.getValue(), newName)
+                    .update(CollectionConstants.PROJECT_NAME_FIELD.getValue(), newName)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -207,7 +227,7 @@ public class ProjectsCollection implements Database{
         DocumentReference documentReference = collection.document(project.getId());
 
         CompletableFuture futureCounters = CompletableFuture.supplyAsync(()->
-                documentReference.update(Constants.PROJECT_COUNTERS_FIELD.getValue(), project.getCounterIds().toArray())
+                documentReference.update(CollectionConstants.PROJECT_COUNTERS_FIELD.getValue(), project.getCounterIds().toArray())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -223,7 +243,7 @@ public class ProjectsCollection implements Database{
         );
 
         CompletableFuture futureUrls = CompletableFuture.supplyAsync(()->
-                documentReference.update(Constants.PROJECT_URLS_FIELD.getValue(), project.getUrlIds().toArray())
+                documentReference.update(CollectionConstants.PROJECT_URLS_FIELD.getValue(), project.getUrlIds().toArray())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -239,7 +259,7 @@ public class ProjectsCollection implements Database{
         );
 
         CompletableFuture futureName = CompletableFuture.supplyAsync(()->
-                documentReference.update(Constants.PROJECT_NAME_FIELD.getValue(), project.getName())
+                documentReference.update(CollectionConstants.PROJECT_NAME_FIELD.getValue(), project.getName())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -272,9 +292,9 @@ public class ProjectsCollection implements Database{
 
         Map<String, Object> projectMap = new HashMap<>();
         projectMap.put("id", project.getId());
-        projectMap.put(Constants.PROJECT_COUNTERS_FIELD.getValue(), project.getCounterIds());
-        projectMap.put(Constants.PROJECT_URLS_FIELD.getValue(), project.getUrlIds());
-        projectMap.put(Constants.PROJECT_NAME_FIELD.getValue(), project.getName());
+        projectMap.put(CollectionConstants.PROJECT_COUNTERS_FIELD.getValue(), project.getCounterIds());
+        projectMap.put(CollectionConstants.PROJECT_URLS_FIELD.getValue(), project.getUrlIds());
+        projectMap.put(CollectionConstants.PROJECT_NAME_FIELD.getValue(), project.getName());
 
         collection.document(project.getId())
                 .set(projectMap)

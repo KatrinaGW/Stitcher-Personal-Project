@@ -13,6 +13,7 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stitcher.controllers.ProjectsCollection;
+import com.example.stitcher.controllers.Statuses;
 import com.example.stitcher.controllers.array_adapters.ProjectsArrayAdapter;
 import com.example.stitcher.controllers.handlers.ProjectHandler;
 import com.example.stitcher.models.DatabaseObject;
@@ -185,10 +186,6 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
 
     @Override
     public void dismissFragment() {
-//        newProjectBtn.setEnabled(true);
-//        projectsListview.setVisibility(View.VISIBLE);
-//        deleteProjectBtn.setEnabled(true);
-
         setCurrentAction(Actions.NO_ACTION.getValue());
 
         getSupportFragmentManager().beginTransaction().
@@ -198,7 +195,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
     @Override
     public void createNew(String input) {
         if(currentAction.equals(Actions.ADDING.getValue())){
-            ProjectHandler.createNewProject(new Project(UUID.randomUUID().toString(), input))
+            ProjectHandler.createNewProject(new Project(UUID.randomUUID().toString(), input, Statuses.QUEUED.getValue()))
                     .thenAccept(success ->
                             runOnUiThread(new Runnable() {
                                 @Override

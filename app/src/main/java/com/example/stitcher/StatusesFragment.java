@@ -12,19 +12,16 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.stitcher.controllers.array_adapters.CounterArrayAdapter;
-import com.example.stitcher.controllers.array_adapters.UrlsArrayAdapter;
+import com.example.stitcher.controllers.array_adapters.StatusesArrayAdapter;
 import com.example.stitcher.models.Counter;
 
-import java.util.ArrayList;
+public class StatusesFragment extends Fragment {
+    private StatusesArrayAdapter statusesArrayAdapter;
+    private ListView statusesListview;
+    private StatusesFragmentHandler statusesFragmentHandler;
 
-public class ProjectCountersFragment extends Fragment {
-    private ArrayList<Counter> counters;
-    private CounterArrayAdapter counterArrayAdapter;
-    private ListView countersListview;
-    private ProjectCountersFragmentHandler fragmentHandler;
-
-    interface ProjectCountersFragmentHandler {
-        void counterChosen(Counter counter);
+    interface StatusesFragmentHandler {
+        void statusChosen(String status);
     }
 
     @Override
@@ -32,15 +29,13 @@ public class ProjectCountersFragment extends Fragment {
                              Bundle savedInstanceState){
         super.onCreateView(inflater, container, savedInstanceState);
 
-        counters = this.getArguments().getParcelableArrayList(ViewConstants.FRAGMENT_PROJECT_COUNTERS.getValue());
-
-        return inflater.inflate(R.layout.fragment_project_counters,
+        return inflater.inflate(R.layout.fragment_statuses,
                 container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
-        countersListview = getView().findViewById(R.id.counters_listview);
+        statusesListview = getView().findViewById(R.id.strings_listview);
         setAdapters();
         setListeners();
     }
@@ -49,23 +44,23 @@ public class ProjectCountersFragment extends Fragment {
     public void onAttach(@NonNull Context context){
         super.onAttach(context);
 
-        if(context instanceof ProjectCountersFragment.ProjectCountersFragmentHandler){
-            fragmentHandler = (ProjectCountersFragment.ProjectCountersFragmentHandler) context;
+        if(context instanceof StatusesFragment.StatusesFragmentHandler){
+            statusesFragmentHandler = (StatusesFragment.StatusesFragmentHandler) context;
         }
     }
 
     private void setAdapters(){
         Context activity = this.getActivity();
 
-        counterArrayAdapter = new CounterArrayAdapter(activity, counters);
-        countersListview.setAdapter(counterArrayAdapter);
+        statusesArrayAdapter = new StatusesArrayAdapter(activity, Statuses.getAllValues());
+        statusesListview.setAdapter(statusesArrayAdapter);
     }
 
     private void setListeners(){
-        countersListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        statusesListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                fragmentHandler.counterChosen(counters.get(position));
+                statusesFragmentHandler.statusChosen(Statuses.getAllValues().get(position));
             }
         });
     }

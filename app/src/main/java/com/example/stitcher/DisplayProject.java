@@ -12,11 +12,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.UrlCollection;
 import com.example.stitcher.controllers.array_adapters.CounterArrayAdapter;
 import com.example.stitcher.controllers.array_adapters.UrlsArrayAdapter;
+import com.example.stitcher.controllers.handlers.ProjectHandler;
 import com.example.stitcher.controllers.handlers.UrlHandler;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.Project;
@@ -27,7 +29,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class DisplayProject extends AppCompatActivity implements EnterTextFragment.EnterTextFragmentHandler {
+public class DisplayProject extends AppCompatActivity implements EnterTextFragment.EnterTextFragmentHandler,
+StatusesFragment.StatusesFragmentHandler{
     UrlsArrayAdapter urlsArrayAdapter;
     CounterArrayAdapter counterArrayAdapter;
     ListView urlsListView;
@@ -38,9 +41,11 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
     Button backBtn;
     Button newCounterBtn;
     Button newUrlBtn;
+    Button statusBtn;
     FloatingActionButton deleteUrlBtn;
     TextView countersHeader;
     TextView urlsHeader;
+    TextView titleTxtView;
     private boolean deletingURL;
 
     @Override
@@ -120,17 +125,26 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
             }
         });
 
+        statusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentVisible();
+
+                Bundle bundle = new Bundle();
+                StatusesFragment fragment = new StatusesFragment();
+                fragment.setArguments(bundle);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.choose_status_fragment_container, StatusesFragment.class, null)
+                        .replace(R.id.choose_status_fragment_container, fragment, null)
+                        .commit();
+            }
+        });
+
         newUrlBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                countersListView.setVisibility(View.GONE);
-                urlsListView.setVisibility(View.GONE);
-                backBtn.setEnabled(false);
-                newCounterBtn.setEnabled(false);
-                countersHeader.setVisibility(View.GONE);
-                urlsHeader.setVisibility(View.GONE);
-                deleteUrlBtn.setVisibility(View.GONE);
-                newUrlBtn.setEnabled(false);
+                fragmentVisible();
 
                 Bundle bundle = new Bundle();
                 bundle.putInt(ViewConstants.FRAGMENT_ERROR_MSG.getValue(), R.string.url_error_msg);
@@ -203,6 +217,18 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
         });
     }
 
+    private void fragmentVisible(){
+        countersListView.setVisibility(View.GONE);
+        urlsListView.setVisibility(View.GONE);
+        backBtn.setEnabled(false);
+        newCounterBtn.setEnabled(false);
+        countersHeader.setVisibility(View.GONE);
+        urlsHeader.setVisibility(View.GONE);
+        deleteUrlBtn.setVisibility(View.GONE);
+        newUrlBtn.setEnabled(false);
+        statusBtn.setEnabled(false);
+    }
+
     private void toggleDeletingUrl(){
         deletingURL = !deletingURL;
         countersListView.setEnabled(!deletingURL);
@@ -210,6 +236,7 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
         countersHeader.setVisibility(deletingURL ? View.GONE : View.VISIBLE);
         newCounterBtn.setEnabled(!deletingURL);
         newUrlBtn.setEnabled(!deletingURL);
+        statusBtn.setEnabled(!deletingURL);
     }
 
     private void init(){
@@ -221,6 +248,12 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
         deleteUrlBtn = findViewById(R.id.delete_url_fab);
         countersHeader = findViewById(R.id.counters_header_text);
         urlsHeader = findViewById(R.id.urls_header_txt);
+        statusBtn = findViewById(R.id.project_status_button);
+        titleTxtView = findViewById(R.id.title_txtView);
+
+        statusBtn.setText(project.getStatus());
+        titleTxtView.setText(project.getName());
+
         setAdapters();
         setListeners();
     }
@@ -233,11 +266,16 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
         newCounterBtn.setEnabled(true);
         deleteUrlBtn.setVisibility(View.VISIBLE);
         newUrlBtn.setEnabled(true);
+        statusBtn.setEnabled(true);
         countersHeader.setVisibility(View.VISIBLE);
         urlsHeader.setVisibility(View.VISIBLE);
 
-        getSupportFragmentManager().beginTransaction().
-                remove(getSupportFragmentManager().findFragmentById(R.id.add_url_fragment_container)).commit();
+        ArrayList<Fragment> fragments = (ArrayList<Fragment>) getSupportFragmentManager().getFragments();
+
+        for(int i = 0; i < fragments.size(); i++) {
+            getSupportFragmentManager().beginTransaction()
+                    .remove(fragments.get(i)).commit();
+        }
     }
 
     @Override
@@ -262,6 +300,29 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
                     @Override
                     public Void apply(Throwable throwable) {
                         Log.e(TAG, "ERROR", throwable);
+                        return null;
+                    }
+                });
+    }
+
+    public void statusChosen(String status){
+        ProjectHandler.updateProjectStatus(project, status)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(success){
+                                    statusBtn.setText(status);
+                                    dismissFragment();
+                                }else{
+                                    Log.e(TAG, "Something went wrong when updating the status");
+                                }
+                            }
+                        }))
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
                         return null;
                     }
                 });
