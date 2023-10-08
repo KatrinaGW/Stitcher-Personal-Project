@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class UrlCollection implements Database{
+public class UrlCollection implements Collection {
     CollectionReference collection;
     FirebaseFirestore db;
     private static UrlCollection INSTANCE;
@@ -197,5 +197,10 @@ public class UrlCollection implements Database{
                 });
 
         return cf;
+    }
+
+    public CompletableFuture<Boolean> updateStringField(String id, String field, String value){
+        //TODO: Implement Method
+        return new CompletableFuture<>();
     }
 }

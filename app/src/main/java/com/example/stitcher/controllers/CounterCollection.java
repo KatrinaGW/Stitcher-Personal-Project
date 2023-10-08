@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class CounterCollection implements Database{
+public class CounterCollection implements Collection {
     private FirebaseFirestore db;
     private CollectionReference collection;
     private static CounterCollection INSTANCE;
@@ -234,5 +234,10 @@ public class CounterCollection implements Database{
                 });
 
         return cf;
+    }
+
+    public CompletableFuture<Boolean> updateStringField(String id, String field, String value){
+        //TODO: Finish implementing method
+        return new CompletableFuture<>();
     }
 }

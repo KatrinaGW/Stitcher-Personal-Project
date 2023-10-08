@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class ProjectsCollection implements Database{
+public class ProjectsCollection implements Collection {
     private CollectionReference collection;
     private FirebaseFirestore db;
     private static ProjectsCollection INSTANCE;
@@ -174,34 +174,19 @@ public class ProjectsCollection implements Database{
     }
 
     public CompletableFuture<Boolean> updateStatus(String id, String newStatus){
-        CompletableFuture<Boolean> cf = new CompletableFuture<>();
-
-        CompletableFuture.runAsync(() -> {
-            collection.document(id)
-                    .update(CollectionConstants.PROJECT_STATUS_FIELD.getValue(), newStatus)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            cf.complete(true);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            cf.completeExceptionally(e);
-                        }
-                    });
-        });
-
-        return cf;
+        return updateStringField(id, CollectionConstants.PROJECT_STATUS_FIELD.getValue(), newStatus);
     }
 
     public CompletableFuture<Boolean> updateName(String id, String newName){
+        return updateStringField(id, CollectionConstants.PROJECT_NAME_FIELD.getValue(), newName);
+    }
+
+    private CompletableFuture<Boolean> updateStringField(String id, String field, String value){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 
         CompletableFuture.runAsync(() -> {
             collection.document(id)
-                    .update(CollectionConstants.PROJECT_NAME_FIELD.getValue(), newName)
+                    .update(field, value)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -296,6 +281,7 @@ public class ProjectsCollection implements Database{
         projectMap.put(CollectionConstants.PROJECT_COUNTERS_FIELD.getValue(), project.getCounterIds());
         projectMap.put(CollectionConstants.PROJECT_URLS_FIELD.getValue(), project.getUrlIds());
         projectMap.put(CollectionConstants.PROJECT_NAME_FIELD.getValue(), project.getName());
+        projectMap.put(CollectionConstants.PROJECT_STATUS_FIELD.getValue(), project.getStatus());
 
         collection.document(project.getId())
                 .set(projectMap)
