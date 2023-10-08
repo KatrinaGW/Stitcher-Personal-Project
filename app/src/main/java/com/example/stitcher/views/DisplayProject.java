@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.views;
 
 import static android.content.ContentValues.TAG;
 
@@ -8,15 +8,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
+import com.example.stitcher.R;
+import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.UrlCollection;
 import com.example.stitcher.controllers.array_adapters.CounterArrayAdapter;
 import com.example.stitcher.controllers.array_adapters.UrlsArrayAdapter;
+import com.example.stitcher.controllers.handlers.ProjectHandler;
 import com.example.stitcher.controllers.handlers.UrlHandler;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.Project;
@@ -27,21 +32,25 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class DisplayProject extends AppCompatActivity implements EnterTextFragment.EnterTextFragmentHandler {
-    UrlsArrayAdapter urlsArrayAdapter;
-    CounterArrayAdapter counterArrayAdapter;
-    ListView urlsListView;
-    ListView countersListView;
-    ArrayList<Counter> counters;
-    ArrayList<Url> urls;
-    Project project;
-    Button backBtn;
-    Button newCounterBtn;
-    Button newUrlBtn;
-    FloatingActionButton deleteUrlBtn;
-    TextView countersHeader;
-    TextView urlsHeader;
+public class DisplayProject extends AppCompatActivity implements EnterTextFragment.EnterTextFragmentHandler,
+StatusesFragment.StatusesFragmentHandler{
+    private UrlsArrayAdapter urlsArrayAdapter;
+    private CounterArrayAdapter counterArrayAdapter;
+    private ListView urlsListView;
+    private ListView countersListView;
+    private ArrayList<Counter> counters;
+    private ArrayList<Url> urls;
+    private Project project;
+    private Button backBtn;
+    private Button newCounterBtn;
+    private Button newUrlBtn;
+    private Button statusBtn;
+    private FloatingActionButton deleteUrlBtn;
+    private TextView countersHeader;
+    private TextView urlsHeader;
+    private TextView titleTxtView;
     private boolean deletingURL;
+    private FrameLayout statusesFrame;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,17 +129,28 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
             }
         });
 
+        statusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentVisible();
+
+                statusesFrame.setVisibility(View.VISIBLE);
+
+                Bundle bundle = new Bundle();
+                StatusesFragment fragment = new StatusesFragment();
+                fragment.setArguments(bundle);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.choose_status_fragment_container, StatusesFragment.class, null)
+                        .replace(R.id.choose_status_fragment_container, fragment, null)
+                        .commit();
+            }
+        });
+
         newUrlBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                countersListView.setVisibility(View.GONE);
-                urlsListView.setVisibility(View.GONE);
-                backBtn.setEnabled(false);
-                newCounterBtn.setEnabled(false);
-                countersHeader.setVisibility(View.GONE);
-                urlsHeader.setVisibility(View.GONE);
-                deleteUrlBtn.setVisibility(View.GONE);
-                newUrlBtn.setEnabled(false);
+                fragmentVisible();
 
                 Bundle bundle = new Bundle();
                 bundle.putInt(ViewConstants.FRAGMENT_ERROR_MSG.getValue(), R.string.url_error_msg);
@@ -203,6 +223,18 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
         });
     }
 
+    private void fragmentVisible(){
+        countersListView.setVisibility(View.GONE);
+        urlsListView.setVisibility(View.GONE);
+        backBtn.setEnabled(false);
+        newCounterBtn.setEnabled(false);
+        countersHeader.setVisibility(View.GONE);
+        urlsHeader.setVisibility(View.GONE);
+        deleteUrlBtn.setVisibility(View.GONE);
+        newUrlBtn.setEnabled(false);
+        statusBtn.setEnabled(false);
+    }
+
     private void toggleDeletingUrl(){
         deletingURL = !deletingURL;
         countersListView.setEnabled(!deletingURL);
@@ -210,6 +242,7 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
         countersHeader.setVisibility(deletingURL ? View.GONE : View.VISIBLE);
         newCounterBtn.setEnabled(!deletingURL);
         newUrlBtn.setEnabled(!deletingURL);
+        statusBtn.setEnabled(!deletingURL);
     }
 
     private void init(){
@@ -221,6 +254,14 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
         deleteUrlBtn = findViewById(R.id.delete_url_fab);
         countersHeader = findViewById(R.id.counters_header_text);
         urlsHeader = findViewById(R.id.urls_header_txt);
+        statusBtn = findViewById(R.id.project_status_button);
+        titleTxtView = findViewById(R.id.title_txtView);
+        statusesFrame = findViewById(R.id.choose_status_frame);
+
+        statusBtn.setText(project.getStatus());
+        titleTxtView.setText(project.getName());
+        statusesFrame.setVisibility(View.GONE);
+
         setAdapters();
         setListeners();
     }
@@ -233,11 +274,17 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
         newCounterBtn.setEnabled(true);
         deleteUrlBtn.setVisibility(View.VISIBLE);
         newUrlBtn.setEnabled(true);
+        statusBtn.setEnabled(true);
         countersHeader.setVisibility(View.VISIBLE);
         urlsHeader.setVisibility(View.VISIBLE);
+        statusesFrame.setVisibility(View.GONE);
 
-        getSupportFragmentManager().beginTransaction().
-                remove(getSupportFragmentManager().findFragmentById(R.id.add_url_fragment_container)).commit();
+        ArrayList<Fragment> fragments = (ArrayList<Fragment>) getSupportFragmentManager().getFragments();
+
+        for(int i = 0; i < fragments.size(); i++) {
+            getSupportFragmentManager().beginTransaction()
+                    .remove(fragments.get(i)).commit();
+        }
     }
 
     @Override
@@ -262,6 +309,29 @@ public class DisplayProject extends AppCompatActivity implements EnterTextFragme
                     @Override
                     public Void apply(Throwable throwable) {
                         Log.e(TAG, "ERROR", throwable);
+                        return null;
+                    }
+                });
+    }
+
+    public void statusChosen(String status){
+        ProjectHandler.updateProjectStatus(project, status)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(success){
+                                    statusBtn.setText(status);
+                                    dismissFragment();
+                                }else{
+                                    Log.e(TAG, "Something went wrong when updating the status");
+                                }
+                            }
+                        }))
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
                         return null;
                     }
                 });

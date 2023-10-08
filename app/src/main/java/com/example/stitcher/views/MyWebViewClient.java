@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.views;
 
 import android.graphics.Bitmap;
 import android.webkit.WebView;

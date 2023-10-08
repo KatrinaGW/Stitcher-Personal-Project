@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.views;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +11,9 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.stitcher.R;
+import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.array_adapters.CounterArrayAdapter;
-import com.example.stitcher.controllers.array_adapters.UrlsArrayAdapter;
 import com.example.stitcher.models.Counter;
 
 import java.util.ArrayList;
@@ -43,8 +44,6 @@ public class ProjectCountersFragment extends Fragment {
         countersListview = getView().findViewById(R.id.counters_listview);
         setAdapters();
         setListeners();
-        System.out.println("FRAGMENT CREATED");
-        System.out.println(counters);
     }
 
     @Override

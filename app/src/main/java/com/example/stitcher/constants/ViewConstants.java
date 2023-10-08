@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.constants;
 
 public enum ViewConstants {
     BACK_NAVIGATE_URL("back_navigate_url"),

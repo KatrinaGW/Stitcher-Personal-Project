@@ -6,9 +6,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.stitcher.controllers.constants.CollectionConstants;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.DatabaseObject;
-import com.example.stitcher.models.Url;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,14 +26,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class CounterCollection implements Database{
+public class CounterCollection implements Collection {
     private FirebaseFirestore db;
     private CollectionReference collection;
     private static CounterCollection INSTANCE;
 
     private CounterCollection(){
         db = FirebaseFirestore.getInstance();
-        collection = db.collection(Constants.COUNTER_COLLECTION.getValue());
+        collection = db.collection(CollectionConstants.COUNTER_COLLECTION.getValue());
     }
 
     public static CounterCollection getInstance(){
@@ -45,9 +45,9 @@ public class CounterCollection implements Database{
     }
 
     private Counter documentSnapshotToCounter(DocumentSnapshot document){
-        int count = ((Long) (document.getData().get(Constants.COUNTER_COUNT_FIELD.getValue()))).intValue();
-        int countGoal = ((Long) (document.getData().get(Constants.COUNTER_GOAL_FIELD.getValue()))).intValue();
-        String name = (String) document.getData().get(Constants.COUNTER_NAME_FIELD.getValue());
+        int count = ((Long) (document.getData().get(CollectionConstants.COUNTER_COUNT_FIELD.getValue()))).intValue();
+        int countGoal = ((Long) (document.getData().get(CollectionConstants.COUNTER_GOAL_FIELD.getValue()))).intValue();
+        String name = (String) document.getData().get(CollectionConstants.COUNTER_NAME_FIELD.getValue());
 
         Counter newCounter = new Counter(document.getId(), count, countGoal, name);
 
@@ -63,7 +63,7 @@ public class CounterCollection implements Database{
         DocumentReference documentReference = collection.document(counter.getId());
 
         CompletableFuture futureCount = CompletableFuture.supplyAsync(()->
-                documentReference.update(Constants.COUNTER_COUNT_FIELD.getValue(), counter.getCount())
+                documentReference.update(CollectionConstants.COUNTER_COUNT_FIELD.getValue(), counter.getCount())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -79,7 +79,7 @@ public class CounterCollection implements Database{
         );
 
         CompletableFuture futureGoal = CompletableFuture.supplyAsync(()->
-                documentReference.update(Constants.COUNTER_GOAL_FIELD.getValue(), counter.getGoal())
+                documentReference.update(CollectionConstants.COUNTER_GOAL_FIELD.getValue(), counter.getGoal())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -95,7 +95,7 @@ public class CounterCollection implements Database{
         );
 
         CompletableFuture futureName = CompletableFuture.supplyAsync(()->
-                documentReference.update(Constants.COUNTER_NAME_FIELD.getValue(), counter.getName())
+                documentReference.update(CollectionConstants.COUNTER_NAME_FIELD.getValue(), counter.getName())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -156,9 +156,9 @@ public class CounterCollection implements Database{
 
         Map<String, Object> counterMap = new HashMap<>();
         counterMap.put("id", counter.getId());
-        counterMap.put(Constants.COUNTER_COUNT_FIELD.getValue(), counter.getCount());
-        counterMap.put(Constants.COUNTER_GOAL_FIELD.getValue(), counter.getGoal());
-        counterMap.put(Constants.COUNTER_NAME_FIELD.getValue(), counter.getName());
+        counterMap.put(CollectionConstants.COUNTER_COUNT_FIELD.getValue(), counter.getCount());
+        counterMap.put(CollectionConstants.COUNTER_GOAL_FIELD.getValue(), counter.getGoal());
+        counterMap.put(CollectionConstants.COUNTER_NAME_FIELD.getValue(), counter.getName());
 
         collection.document(counter.getId())
                 .set(counterMap)
@@ -234,5 +234,10 @@ public class CounterCollection implements Database{
                 });
 
         return cf;
+    }
+
+    public CompletableFuture<Boolean> updateStringField(String id, String field, String value){
+        //TODO: Finish implementing method
+        return new CompletableFuture<>();
     }
 }

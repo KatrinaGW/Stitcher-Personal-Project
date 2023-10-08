@@ -31,8 +31,29 @@ public class ProjectHandler {
         return cf;
     }
 
-    public static CompletableFuture<Boolean> updateProjectName(Project project){
+    public static CompletableFuture<Boolean> updateProjectStatus(Project project, String newStatus){
+        project.setStatus(newStatus);
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        ProjectsCollection.getInstance().updateStatus(project.getId(), project.getStatus())
+                .thenAccept(success ->
+                        cf.complete(success)
+                )
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, "ERROR", throwable);
+                        cf.completeExceptionally(throwable);
+                        return null;
+                    }
+                });
+
+        return cf;
+    }
+
+    public static CompletableFuture<Boolean> updateProjectName(Project project, String newName){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+        project.setName(newName);
 
         ProjectsCollection.getInstance().updateName(project.getId(), project.getName())
                 .thenAccept(success -> cf.complete(success))

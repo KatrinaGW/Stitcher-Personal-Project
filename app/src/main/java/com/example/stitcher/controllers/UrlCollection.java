@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.stitcher.models.Counter;
+import com.example.stitcher.controllers.constants.CollectionConstants;
 import com.example.stitcher.models.DatabaseObject;
 import com.example.stitcher.models.Url;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,20 +21,19 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class UrlCollection implements Database{
+public class UrlCollection implements Collection {
     CollectionReference collection;
     FirebaseFirestore db;
     private static UrlCollection INSTANCE;
 
     private UrlCollection(){
         db = FirebaseFirestore.getInstance();
-        collection = db.collection(Constants.URLS_COLLECTION.getValue());
+        collection = db.collection(CollectionConstants.URLS_COLLECTION.getValue());
     }
 
     public static UrlCollection getInstance(){
@@ -46,7 +45,7 @@ public class UrlCollection implements Database{
     }
 
     private Url documentSnapshotToUrl(DocumentSnapshot doc){
-        String url = (String) doc.getData().get(Constants.URLS_FIELD.getValue());
+        String url = (String) doc.getData().get(CollectionConstants.URLS_FIELD.getValue());
         String id = doc.getId();
 
         Url newURL = new Url(id, url);
@@ -129,7 +128,7 @@ public class UrlCollection implements Database{
         DocumentReference documentReference = collection.document(url.getId());
 
         CompletableFuture.runAsync(() ->
-                documentReference.update(Constants.URLS_FIELD.getValue(), url.getUrl())
+                documentReference.update(CollectionConstants.URLS_FIELD.getValue(), url.getUrl())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -154,7 +153,7 @@ public class UrlCollection implements Database{
 
         Map<String, Object> urlMap = new HashMap<>();
         urlMap.put("id", url.getId());
-        urlMap.put(Constants.URLS_FIELD.getValue(), url.getUrl());
+        urlMap.put(CollectionConstants.URLS_FIELD.getValue(), url.getUrl());
 
         collection.document(url.getId())
                 .set(urlMap)
@@ -198,5 +197,10 @@ public class UrlCollection implements Database{
                 });
 
         return cf;
+    }
+
+    public CompletableFuture<Boolean> updateStringField(String id, String field, String value){
+        //TODO: Implement Method
+        return new CompletableFuture<>();
     }
 }

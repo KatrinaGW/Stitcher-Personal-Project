@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.constants;
 
 public enum Actions {
     NO_ACTION("no_action"),

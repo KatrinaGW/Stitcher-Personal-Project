@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.views;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.example.stitcher.R;
+import com.example.stitcher.constants.ViewConstants;
 
 
 public class EnterTextFragment extends Fragment {

@@ -1,10 +1,9 @@
-package com.example.stitcher;
+package com.example.stitcher.views;
 
 import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -18,13 +17,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.stitcher.controllers.CounterCollection;
+import com.example.stitcher.R;
+import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.handlers.CounterHandler;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.Project;
 import com.example.stitcher.models.Url;
 
-import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Function;
 
