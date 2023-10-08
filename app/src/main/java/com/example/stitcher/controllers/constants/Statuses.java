@@ -1,4 +1,4 @@
-package com.example.stitcher.controllers;
+package com.example.stitcher.controllers.constants;
 
 public enum Statuses {
     IN_PROGRESS("In Progress"),

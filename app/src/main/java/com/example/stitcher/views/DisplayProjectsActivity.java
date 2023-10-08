@@ -16,7 +16,7 @@ import com.example.stitcher.R;
 import com.example.stitcher.constants.Actions;
 import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.ProjectsCollection;
-import com.example.stitcher.controllers.Statuses;
+import com.example.stitcher.controllers.constants.Statuses;
 import com.example.stitcher.controllers.array_adapters.ProjectsArrayAdapter;
 import com.example.stitcher.controllers.handlers.ProjectHandler;
 import com.example.stitcher.models.DatabaseObject;
@@ -218,9 +218,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
                         }
                     });
         }else if(currentAction.equals(Actions.UPDATING.getValue())){
-            clickedProject.setName(input);
-
-            ProjectHandler.updateProjectName(clickedProject)
+            ProjectHandler.updateProjectName(clickedProject, input)
                     .thenAccept(success ->
                             runOnUiThread(new Runnable() {
                                 @Override

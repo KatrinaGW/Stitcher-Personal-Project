@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.stitcher.controllers.constants.CollectionConstants;
 import com.example.stitcher.models.DatabaseObject;
 import com.example.stitcher.models.Project;
 import com.google.android.gms.tasks.OnCompleteListener;

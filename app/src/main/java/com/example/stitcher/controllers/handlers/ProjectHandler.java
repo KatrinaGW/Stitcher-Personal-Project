@@ -51,8 +51,9 @@ public class ProjectHandler {
         return cf;
     }
 
-    public static CompletableFuture<Boolean> updateProjectName(Project project){
+    public static CompletableFuture<Boolean> updateProjectName(Project project, String newName){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
+        project.setName(newName);
 
         ProjectsCollection.getInstance().updateName(project.getId(), project.getName())
                 .thenAccept(success -> cf.complete(success))

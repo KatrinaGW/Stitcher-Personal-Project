@@ -1,4 +1,4 @@
-package com.example.stitcher.controllers;
+package com.example.stitcher.controllers.constants;
 
 public enum CollectionConstants {
     PROJECT_STATUS_FIELD("status"),
