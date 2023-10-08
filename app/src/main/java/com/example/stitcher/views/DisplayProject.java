@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.views;
 
 import static android.content.ContentValues.TAG;
 
@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.stitcher.R;
+import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.UrlCollection;
 import com.example.stitcher.controllers.array_adapters.CounterArrayAdapter;

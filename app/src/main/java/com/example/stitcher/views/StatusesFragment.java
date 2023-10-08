@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.views;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,9 +11,9 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.stitcher.controllers.array_adapters.CounterArrayAdapter;
+import com.example.stitcher.R;
+import com.example.stitcher.constants.Statuses;
 import com.example.stitcher.controllers.array_adapters.StatusesArrayAdapter;
-import com.example.stitcher.models.Counter;
 
 public class StatusesFragment extends Fragment {
     private StatusesArrayAdapter statusesArrayAdapter;

@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.views;
 
 import static android.content.ContentValues.TAG;
 
@@ -12,6 +12,9 @@ import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.stitcher.R;
+import com.example.stitcher.constants.Actions;
+import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.ProjectsCollection;
 import com.example.stitcher.controllers.Statuses;
 import com.example.stitcher.controllers.array_adapters.ProjectsArrayAdapter;
@@ -21,7 +24,6 @@ import com.example.stitcher.models.Project;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 

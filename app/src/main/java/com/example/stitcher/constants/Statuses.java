@@ -1,4 +1,4 @@
-package com.example.stitcher;
+package com.example.stitcher.constants;
 
 import java.util.ArrayList;
 
