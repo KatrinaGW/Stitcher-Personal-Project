@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,22 +32,23 @@ import java.util.function.Function;
 
 public class DisplayProject extends AppCompatActivity implements EnterTextFragment.EnterTextFragmentHandler,
 StatusesFragment.StatusesFragmentHandler{
-    UrlsArrayAdapter urlsArrayAdapter;
-    CounterArrayAdapter counterArrayAdapter;
-    ListView urlsListView;
-    ListView countersListView;
-    ArrayList<Counter> counters;
-    ArrayList<Url> urls;
-    Project project;
-    Button backBtn;
-    Button newCounterBtn;
-    Button newUrlBtn;
-    Button statusBtn;
-    FloatingActionButton deleteUrlBtn;
-    TextView countersHeader;
-    TextView urlsHeader;
-    TextView titleTxtView;
+    private UrlsArrayAdapter urlsArrayAdapter;
+    private CounterArrayAdapter counterArrayAdapter;
+    private ListView urlsListView;
+    private ListView countersListView;
+    private ArrayList<Counter> counters;
+    private ArrayList<Url> urls;
+    private Project project;
+    private Button backBtn;
+    private Button newCounterBtn;
+    private Button newUrlBtn;
+    private Button statusBtn;
+    private FloatingActionButton deleteUrlBtn;
+    private TextView countersHeader;
+    private TextView urlsHeader;
+    private TextView titleTxtView;
     private boolean deletingURL;
+    private FrameLayout statusesFrame;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +131,8 @@ StatusesFragment.StatusesFragmentHandler{
             @Override
             public void onClick(View v) {
                 fragmentVisible();
+
+                statusesFrame.setVisibility(View.VISIBLE);
 
                 Bundle bundle = new Bundle();
                 StatusesFragment fragment = new StatusesFragment();
@@ -250,9 +254,11 @@ StatusesFragment.StatusesFragmentHandler{
         urlsHeader = findViewById(R.id.urls_header_txt);
         statusBtn = findViewById(R.id.project_status_button);
         titleTxtView = findViewById(R.id.title_txtView);
+        statusesFrame = findViewById(R.id.choose_status_frame);
 
         statusBtn.setText(project.getStatus());
         titleTxtView.setText(project.getName());
+        statusesFrame.setVisibility(View.GONE);
 
         setAdapters();
         setListeners();
@@ -269,6 +275,7 @@ StatusesFragment.StatusesFragmentHandler{
         statusBtn.setEnabled(true);
         countersHeader.setVisibility(View.VISIBLE);
         urlsHeader.setVisibility(View.VISIBLE);
+        statusesFrame.setVisibility(View.GONE);
 
         ArrayList<Fragment> fragments = (ArrayList<Fragment>) getSupportFragmentManager().getFragments();
 
