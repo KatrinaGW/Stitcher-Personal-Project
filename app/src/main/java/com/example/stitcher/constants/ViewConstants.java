@@ -1,6 +1,9 @@
 package com.example.stitcher.constants;
 
 public enum ViewConstants {
+    FRAGMENT_CONFIRM_LABEL("confirm_label"),
+    FRAGMENT_CANCEL_LABEL("cancel_label"),
+    FRAGMENT_HEADER("header_label"),
     BACK_NAVIGATE_URL("back_navigate_url"),
     FRAGMENT_PROJECT_COUNTERS("project_counters"),
     FRAGMENT_ERROR_MSG("error_msg"),

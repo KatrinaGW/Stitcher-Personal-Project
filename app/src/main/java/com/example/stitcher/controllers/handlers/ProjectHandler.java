@@ -10,15 +10,17 @@ import com.example.stitcher.controllers.UrlCollection;
 import com.example.stitcher.models.Project;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class ProjectHandler {
-    public static CompletableFuture<Boolean> createNewProject(Project project){
-        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+    public static CompletableFuture<Project> createNewProject(String projectName, String projectStatus){
+        CompletableFuture<Project> cf = new CompletableFuture<>();
+        Project project = new Project(UUID.randomUUID().toString(), projectName, projectStatus);
 
         ProjectsCollection.getInstance().insertRecord(project.getId(), project)
-                .thenAccept(success -> cf.complete(success))
+                .thenAccept(success -> cf.complete(project))
                 .exceptionally(new Function<Throwable, Void>() {
                     @Override
                     public Void apply(Throwable throwable) {

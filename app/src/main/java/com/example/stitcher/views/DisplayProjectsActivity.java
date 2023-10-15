@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class DisplayProjectsActivity extends AppCompatActivity implements EnterTextFragment.EnterTextFragmentHandler {
+public class DisplayProjectsActivity extends AppCompatActivity implements
+        EnterTextFragment.EnterTextFragmentHandler, ConfirmationFragment.ConfirmationFragmentHandler {
     ArrayList<Project> projects;
     ProjectsArrayAdapter projectsArrayAdapter;
     ListView projectsListview;
@@ -94,26 +95,17 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
 
                     startActivity(projectIntent);
                 }else if(currentAction.equals(Actions.DELETING.getValue())){
-                    ProjectHandler.deleteProject(clickedProject)
-                            .thenAccept(success ->
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if(success){
-                                                setCurrentAction(Actions.NO_ACTION.getValue());
-                                                setProjectsArrayAdapter();
-                                            }else{
-                                                Log.e(TAG, "Something went wrong when deleting the project!");
-                                            }
-                                        }
-                                    }))
-                            .exceptionally(new Function<Throwable, Void>() {
-                                @Override
-                                public Void apply(Throwable throwable) {
-                                    Log.e(TAG, throwable.getMessage(), throwable);
-                                    return null;
-                                }
-                            });
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ViewConstants.FRAGMENT_HEADER.getValue(), String.format("Delete %s?", clickedProject.getName()));
+                    bundle.putString(ViewConstants.FRAGMENT_CONFIRM_LABEL.getValue(), "Yes, delete");
+                    bundle.putString(ViewConstants.FRAGMENT_CANCEL_LABEL.getValue(), "No, Cancel");
+                    ConfirmationFragment fragment = new ConfirmationFragment();
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.project_name_fragment_container, ConfirmationFragment.class, null)
+                            .replace(R.id.project_name_fragment_container, fragment, null)
+                            .commit();
                 } else if (currentAction.equals(Actions.UPDATING.getValue())) {
                     projectsListview.setVisibility(View.GONE);
                     Bundle bundle = new Bundle();
@@ -135,25 +127,18 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
         editProjectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCurrentAction(Actions.UPDATING.getValue());
+                setCurrentAction(
+                        currentAction.equals(Actions.UPDATING.getValue()) ?
+                                Actions.NO_ACTION.getValue() :
+                                Actions.UPDATING.getValue()
+                );
             }
         });
 
         newProjectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCurrentAction(Actions.ADDING.getValue());
-
-                Bundle bundle = new Bundle();
-                bundle.putInt(ViewConstants.FRAGMENT_HINT_MSG.getValue(), R.string.project_name_hint);
-                bundle.putInt(ViewConstants.FRAGMENT_ERROR_MSG.getValue(), R.string.project_name_error_msg);
-                EnterTextFragment fragment = new EnterTextFragment();
-                fragment.setArguments(bundle);
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.project_name_fragment_container, EnterTextFragment.class, null)
-                        .replace(R.id.project_name_fragment_container, fragment, null)
-                        .commit();
+                startActivity(new Intent(DisplayProjectsActivity.this, CreateProjectActivity.class));
             }
         });
     }
@@ -196,28 +181,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
 
     @Override
     public void createNew(String input) {
-        if(currentAction.equals(Actions.ADDING.getValue())){
-            ProjectHandler.createNewProject(new Project(UUID.randomUUID().toString(), input, Statuses.QUEUED.getValue()))
-                    .thenAccept(success ->
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(success){
-                                        setProjectsArrayAdapter();
-                                        dismissFragment();
-                                    }else{
-                                        Log.e(TAG, "Something went wrong when creating the project");
-                                    }
-                                }
-                            }))
-                    .exceptionally(new Function<Throwable, Void>() {
-                        @Override
-                        public Void apply(Throwable throwable) {
-                            Log.e(TAG, throwable.getMessage(), throwable);
-                            return null;
-                        }
-                    });
-        }else if(currentAction.equals(Actions.UPDATING.getValue())){
+        if(currentAction.equals(Actions.UPDATING.getValue())){
             ProjectHandler.updateProjectName(clickedProject, input)
                     .thenAccept(success ->
                             runOnUiThread(new Runnable() {
@@ -240,5 +204,35 @@ public class DisplayProjectsActivity extends AppCompatActivity implements EnterT
                     });
         }
 
+    }
+
+    @Override
+    public void cancelled() {
+        dismissFragment();
+    }
+
+    @Override
+    public void confirmed() {
+        ProjectHandler.deleteProject(clickedProject)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(success){
+                                    setCurrentAction(Actions.NO_ACTION.getValue());
+                                    setProjectsArrayAdapter();
+                                    dismissFragment();
+                                }else{
+                                    Log.e(TAG, "Something went wrong when deleting the project!");
+                                }
+                            }
+                        }))
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+                        return null;
+                    }
+                });
     }
 }

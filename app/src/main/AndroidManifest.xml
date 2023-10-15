@@ -26,6 +26,7 @@
         <activity android:name=".views.StitchCounterActivity" />
         <activity android:name=".views.UrlWebviewActivity"/>
         <activity android:name=".views.DisplayProject"/>
+        <activity android:name=".views.CreateProjectActivity"/>
     </application>
 
 </manifest>
