@@ -3,20 +3,26 @@ package com.example.stitcher.views;
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stitcher.R;
 import com.example.stitcher.constants.Actions;
+import com.example.stitcher.constants.Statuses;
 import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.ProjectsCollection;
-import com.example.stitcher.controllers.constants.Statuses;
 import com.example.stitcher.controllers.array_adapters.ProjectsArrayAdapter;
 import com.example.stitcher.controllers.handlers.ProjectHandler;
 import com.example.stitcher.models.DatabaseObject;
@@ -37,11 +43,20 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
     FloatingActionButton editProjectBtn;
     private String currentAction;
     private Project clickedProject;
+    private LinearLayout statusesLayout;
+    private String visibleStatus;
+    private ArrayList<Button> statusButtons;
+    private GradientDrawable selectedButtonBackground;
+    private GradientDrawable unselectedButtonBackground;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.display_projects);
+
+        statusesLayout = findViewById(R.id.statuses_linear_layout);
+        visibleStatus = Statuses.IN_PROGRESS.getValue();
+        setStatusesLayout();
 
     }
 
@@ -59,6 +74,58 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
         editProjectBtn = findViewById(R.id.edit_project_fab);
         setProjectsArrayAdapter();
         setListeners();
+    }
+
+    private void setStatusesLayout(){
+        statusButtons = new ArrayList<>();
+
+        unselectedButtonBackground = new GradientDrawable();
+        unselectedButtonBackground.setShape(GradientDrawable.RECTANGLE);
+        unselectedButtonBackground.setCornerRadius(20); // Adjust the corner radius as needed
+        unselectedButtonBackground.setColor(getResources().getColor(R.color.url_background));
+
+        selectedButtonBackground = new GradientDrawable();
+        selectedButtonBackground.setShape(GradientDrawable.RECTANGLE);
+        selectedButtonBackground.setCornerRadius(20); // Adjust the corner radius as needed
+        selectedButtonBackground.setColor(getResources().getColor(R.color.purple_500));
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        layoutParams.setMargins(5, 0, 5, 0);
+
+        for(String status : Statuses.getAllValues()){
+            Button newButton = new Button(this);
+            newButton.setText(status);
+            newButton.setTextSize(11);
+            newButton.setTextColor(Color.WHITE);
+            newButton.setLayoutParams(layoutParams);
+            newButton.setBackground(status.equals(Statuses.IN_PROGRESS.getValue()) ?
+                    selectedButtonBackground : unselectedButtonBackground);
+
+            newButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    statusButtonClicked((Button) v);
+                }
+            });
+            statusButtons.add(newButton);
+            statusesLayout.addView(newButton);
+        }
+    }
+
+    private void statusButtonClicked(Button button){
+        visibleStatus = button.getText().toString();
+        for(Button statusButton : statusButtons){
+            if(statusButton == button){
+                statusButton.setBackground(selectedButtonBackground);
+            }else{
+                statusButton.setBackground(unselectedButtonBackground);
+            }
+        }
+
     }
 
     private void setCurrentAction(String newAction){
