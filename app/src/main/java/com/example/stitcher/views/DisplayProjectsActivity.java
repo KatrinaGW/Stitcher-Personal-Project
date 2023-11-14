@@ -125,7 +125,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
                 statusButton.setBackground(unselectedButtonBackground);
             }
         }
-
+        setProjectsArrayAdapter();
     }
 
     private void setCurrentAction(String newAction){
@@ -213,27 +213,19 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
     private void setProjectsArrayAdapter(){
         DisplayProjectsActivity projsActivity = this;
 
-        if(projects == null){
-            projects = new ArrayList<Project>();
-        }else{
-            projects.clear();
-        }
-
-        ProjectsCollection.getInstance().getAll()
+        ProjectHandler.getProjectsWithStatus(visibleStatus)
                 .thenAccept(newProjs -> {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            for(DatabaseObject proj : newProjs){
-                                projects.add((Project) proj);
-                            }
+                            projects = newProjs;
                             projectsArrayAdapter = new ProjectsArrayAdapter(projsActivity, projects);
                             projectsListview.setAdapter(projectsArrayAdapter);
                         }
                     });
                 })
                 .exceptionally(throwable -> {
-                    Log.w(TAG, throwable.getMessage());
+                    Log.e(TAG, throwable.getMessage());
                     return null;
                 });
     }
@@ -255,6 +247,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     if(success){
+                                        ProjectHandler.clearStatusList(clickedProject.getStatus());
                                         setProjectsArrayAdapter();
                                         dismissFragment();
                                     }else{
@@ -286,6 +279,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 if(success){
+                                    ProjectHandler.clearStatusList(clickedProject.getStatus());
                                     setCurrentAction(Actions.NO_ACTION.getValue());
                                     setProjectsArrayAdapter();
                                     dismissFragment();

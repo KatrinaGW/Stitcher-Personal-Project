@@ -4,17 +4,21 @@ import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
+import com.example.stitcher.constants.Statuses;
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.ProjectsCollection;
 import com.example.stitcher.controllers.UrlCollection;
 import com.example.stitcher.models.Project;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class ProjectHandler {
+    private static HashMap<String, ArrayList<Project>> projectLists = new HashMap<>();
+
     public static CompletableFuture<Project> createNewProject(String projectName, String projectStatus){
         CompletableFuture<Project> cf = new CompletableFuture<>();
         Project project = new Project(UUID.randomUUID().toString(), projectName, projectStatus);
@@ -67,6 +71,34 @@ public class ProjectHandler {
                         return null;
                     }
                 });
+
+        return cf;
+    }
+
+    public static void clearStatusList(String status){
+        projectLists.remove(status);
+    }
+
+    public static CompletableFuture<ArrayList<Project>> getProjectsWithStatus(String status){
+        CompletableFuture<ArrayList<Project>> cf = new CompletableFuture<>();
+
+        if(projectLists.containsKey(status)){
+            cf.complete(projectLists.get(status));
+        }else{
+            if(Statuses.getAllValues().contains(status)){
+                ProjectsCollection.getInstance().getAllWithStatus(status)
+                        .thenAccept(projects -> {
+                            projectLists.put(status, projects);
+                            cf.complete(projects);
+                        })
+                        .exceptionally(e -> {
+                            Log.e("TAG", e.getMessage());
+                            return null;
+                        });
+            }else{
+                cf.completeExceptionally(new IllegalArgumentException(String.format("The status '%s' does not exist!", status)));
+            }
+        }
 
         return cf;
     }

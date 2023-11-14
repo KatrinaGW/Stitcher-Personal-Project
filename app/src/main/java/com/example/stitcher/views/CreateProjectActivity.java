@@ -73,6 +73,7 @@ public class CreateProjectActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                                ProjectHandler.clearStatusList(chosenStatus);
                                                 Intent projectIntent = new Intent(CreateProjectActivity.this, DisplayProject.class);
                                                 projectIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), project);
 

@@ -43,6 +43,49 @@ public class ProjectsCollection implements Collection {
         return INSTANCE;
     }
 
+    public CompletableFuture<ArrayList<Project>> getAllWithStatus(String status){
+        ArrayList<Project> projects = new ArrayList<Project>();
+        CompletableFuture<ArrayList<Project>> cf = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
+            collection.whereEqualTo(CollectionConstants.PROJECT_STATUS_FIELD.getValue(), status)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d(TAG, document.getId());
+                                    ArrayList<String> counterIds = (ArrayList<String>) document.getData()
+                                            .get(CollectionConstants.PROJECT_COUNTERS_FIELD.getValue());
+                                    ArrayList<String> urlIds = (ArrayList<String>) document.getData()
+                                            .get(CollectionConstants.PROJECT_URLS_FIELD.getValue());
+                                    String name = (String) document.getData().get(CollectionConstants.PROJECT_NAME_FIELD.getValue());
+                                    String status = (String) document.getData().get(CollectionConstants.PROJECT_STATUS_FIELD.getValue());
+                                    String id = document.getId();
+
+                                    Project newProject = new Project(id, counterIds, urlIds, name, status);
+                                    projects.add(newProject);
+                                }
+                                cf.complete(projects);
+                            } else {
+                                Log.w(TAG, "Error", task.getException());
+                                cf.complete(projects);
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e("TAG", e.getMessage());
+                            cf.completeExceptionally(e);
+                        }
+                    });
+        });
+
+        return cf;
+    }
+
     @Override
     public CompletableFuture<ArrayList<? extends DatabaseObject>> getAll() {
         ArrayList<Project> projects = new ArrayList<Project>();
