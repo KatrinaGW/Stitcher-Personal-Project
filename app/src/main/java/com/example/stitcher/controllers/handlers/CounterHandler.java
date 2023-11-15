@@ -50,6 +50,7 @@ public class CounterHandler {
         return success;
     }
     public static CompletableFuture<Boolean> deleteCounter(Counter counter, Project parentProject){
+        ProjectHandler.clearStatusList(parentProject.getStatus());
         parentProject.removeCounter(counter.getId());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
@@ -98,6 +99,7 @@ public class CounterHandler {
     }
 
     public static CompletableFuture<Boolean> createNewCounter(Counter counter, Project parentProject){
+        ProjectHandler.clearStatusList(parentProject.getStatus());
         parentProject.addCounterId(counter.getId());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();

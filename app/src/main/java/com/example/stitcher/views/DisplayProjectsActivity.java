@@ -251,7 +251,6 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     if(success){
-                                        ProjectHandler.clearStatusList(clickedProject.getStatus());
                                         setProjectsArrayAdapter();
                                         dismissFragment();
                                     }else{
@@ -283,7 +282,6 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 if(success){
-                                    ProjectHandler.clearStatusList(clickedProject.getStatus());
                                     setCurrentAction(Actions.NO_ACTION.getValue());
                                     setProjectsArrayAdapter();
                                     dismissFragment();

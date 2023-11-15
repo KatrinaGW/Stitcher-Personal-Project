@@ -16,6 +16,7 @@ import java.util.function.Function;
 public class UrlHandler {
     public static CompletableFuture<Boolean> deleteUrl(Url url, Project parentProject){
         parentProject.removeUrl(url.getId());
+        ProjectHandler.clearStatusList(parentProject.getStatus());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
 
@@ -64,6 +65,7 @@ public class UrlHandler {
 
     public static CompletableFuture<Boolean> createNewUrl(Url url, Project parentProject){
         parentProject.addUrlId(url.getId());
+        ProjectHandler.clearStatusList(parentProject.getStatus());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
 

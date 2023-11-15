@@ -24,7 +24,10 @@ public class ProjectHandler {
         Project project = new Project(UUID.randomUUID().toString(), projectName, projectStatus);
 
         ProjectsCollection.getInstance().insertRecord(project.getId(), project)
-                .thenAccept(success -> cf.complete(project))
+                .thenAccept(success -> {
+                    clearStatusList(projectStatus);
+                    cf.complete(project);
+                })
                 .exceptionally(new Function<Throwable, Void>() {
                     @Override
                     public Void apply(Throwable throwable) {
@@ -38,6 +41,8 @@ public class ProjectHandler {
     }
 
     public static CompletableFuture<Boolean> updateProjectStatus(Project project, String newStatus){
+        clearStatusList(project.getStatus());
+        clearStatusList(newStatus);
         project.setStatus(newStatus);
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 
@@ -60,6 +65,7 @@ public class ProjectHandler {
     public static CompletableFuture<Boolean> updateProjectName(Project project, String newName){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
         project.setName(newName);
+        clearStatusList(project.getStatus());
 
         ProjectsCollection.getInstance().updateName(project.getId(), project.getName())
                 .thenAccept(success -> cf.complete(success))
@@ -166,6 +172,7 @@ public class ProjectHandler {
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(cfs.toArray(new CompletableFuture[cfs.size()]));
 
         allFutures.thenRun(() -> {
+            clearStatusList(project.getStatus());
             cf.complete(errors.size()==0);
         });
 
