@@ -9,6 +9,7 @@ I've tried existing apps, but they still aren't exactly what I wanted. So, I am 
 ## Current Features
 - Lists of Projects
   - Each project has stitch counters and urls
+  - Each project has a status, and the projects are sorted by status
 - Stitch counters
   - Stitch counters have names, a current count, and a goal count
 - URLs
@@ -18,6 +19,4 @@ I've tried existing apps, but they still aren't exactly what I wanted. So, I am 
 
  ## TODO Features
  - Add the ability to keep notes for each project
- - Add the ability to mark the status of a project
- - Add an archived projects tab
  - Improve the UI
