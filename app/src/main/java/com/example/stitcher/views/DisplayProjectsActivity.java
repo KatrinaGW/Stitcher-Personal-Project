@@ -117,15 +117,18 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
     }
 
     private void statusButtonClicked(Button button){
-        visibleStatus = button.getText().toString();
-        for(Button statusButton : statusButtons){
-            if(statusButton == button){
-                statusButton.setBackground(selectedButtonBackground);
-            }else{
-                statusButton.setBackground(unselectedButtonBackground);
+        if(!currentAction.equals(Actions.DELETING) && getSupportFragmentManager().getFragments().isEmpty()){
+            visibleStatus = button.getText().toString();
+            for(Button statusButton : statusButtons){
+                if(statusButton == button){
+                    statusButton.setBackground(selectedButtonBackground);
+                }else{
+                    statusButton.setBackground(unselectedButtonBackground);
+                }
             }
+            setProjectsArrayAdapter();
         }
-        setProjectsArrayAdapter();
+
     }
 
     private void setCurrentAction(String newAction){
@@ -146,7 +149,8 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
         deleteProjectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCurrentAction(currentAction.equals(Actions.DELETING.getValue()) ?
+                setCurrentAction(currentAction.equals(Actions.DELETING.getValue())
+                        && getSupportFragmentManager().getFragments().isEmpty() ?
                         Actions.NO_ACTION.getValue() : Actions.DELETING.getValue());
             }
         });
@@ -161,7 +165,7 @@ public class DisplayProjectsActivity extends AppCompatActivity implements
                     projectIntent.putExtra(ViewConstants.SELECTED_PROJECT.getValue(), clickedProject);
 
                     startActivity(projectIntent);
-                }else if(currentAction.equals(Actions.DELETING.getValue())){
+                }else if(currentAction.equals(Actions.DELETING.getValue()) && getSupportFragmentManager().getFragments().isEmpty()){
                     Bundle bundle = new Bundle();
                     bundle.putString(ViewConstants.FRAGMENT_HEADER.getValue(), String.format("Delete %s?", clickedProject.getName()));
                     bundle.putString(ViewConstants.FRAGMENT_CONFIRM_LABEL.getValue(), "Yes, delete");
