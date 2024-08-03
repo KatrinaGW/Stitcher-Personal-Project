@@ -12,7 +12,9 @@ public enum CollectionConstants {
     COUNTER_COUNT_FIELD("count"),
     COUNTER_GOAL_FIELD("goal"),
     COUNTER_NAME_FIELD("name"),
-    PROJECT_NOTES_FIELD("notes");
+    PROJECT_NOTES_FIELD("notes"),
+    NOTES_COLLECTION("Notes"),
+    NOTES_FIELD("note");
 
     private String value;
 

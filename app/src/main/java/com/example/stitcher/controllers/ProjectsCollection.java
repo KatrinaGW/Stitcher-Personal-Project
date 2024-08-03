@@ -138,6 +138,30 @@ public class ProjectsCollection implements Collection {
         return cf;
     }
 
+    public CompletableFuture<Boolean> removeNotesId(String projectId, String notesId){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
+            collection.document(projectId)
+                    .update(CollectionConstants.PROJECT_NOTES_FIELD.getValue(), FieldValue.arrayRemove(notesId))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            cf.complete(true);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "ERROR", e);
+                            cf.completeExceptionally(e);
+                        }
+                    });
+        });
+
+        return cf;
+    }
+
     public CompletableFuture<Boolean> removeCounterid(String projectId, String counterId){
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 
@@ -168,6 +192,30 @@ public class ProjectsCollection implements Collection {
         CompletableFuture.runAsync(() -> {
             collection.document(projectId)
                     .update(CollectionConstants.PROJECT_URLS_FIELD.getValue(), FieldValue.arrayRemove(urlId))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            cf.complete(true);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "ERROR", e);
+                            cf.completeExceptionally(e);
+                        }
+                    });
+        });
+
+        return cf;
+    }
+
+    public CompletableFuture<Boolean> updateNotesId(String projectId, String notesId){
+        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
+            collection.document(projectId)
+                    .update(CollectionConstants.PROJECT_NOTES_FIELD.getValue(), FieldValue.arrayUnion(notesId))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -271,6 +319,23 @@ public class ProjectsCollection implements Collection {
 
         DocumentReference documentReference = collection.document(project.getId());
 
+        CompletableFuture futureNotes = CompletableFuture.supplyAsync(() ->
+                documentReference.update(CollectionConstants.PROJECT_NOTES_FIELD.getValue(), project.getNotesIds().toArray())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+
+                            }
+                        })
+
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                errors.add(e.getMessage());
+                            }
+                        })
+        );
+
         CompletableFuture futureCounters = CompletableFuture.supplyAsync(()->
                 documentReference.update(CollectionConstants.PROJECT_COUNTERS_FIELD.getValue(), project.getCounterIds().toArray())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -319,7 +384,7 @@ public class ProjectsCollection implements Collection {
                         })
         );
 
-        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureCounters, futureUrls, futureName);
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureCounters, futureUrls, futureName, futureNotes);
 
         allFutures.thenRun(() -> {
             System.out.println("Finished");
