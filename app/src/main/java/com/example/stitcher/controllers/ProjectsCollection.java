@@ -64,8 +64,17 @@ public class ProjectsCollection implements Collection {
                                     String status = (String) document.getData().get(CollectionConstants.PROJECT_STATUS_FIELD.getValue());
                                     String id = document.getId();
 
-                                    Project newProject = new Project(id, counterIds, urlIds, name, status);
+                                    Object tempNotesIds = document.getData().get(CollectionConstants.PROJECT_NOTES_FIELD.getValue());
+                                    ArrayList<String> notesIds = new ArrayList<String>();
+
+                                    if(tempNotesIds != null){
+                                        notesIds = (ArrayList<String>) tempNotesIds;
+                                    }
+
+                                    Project newProject = new Project(id, counterIds, urlIds, notesIds, name, status);
                                     projects.add(newProject);
+
+                                    System.out.println(notesIds);
                                 }
                                 cf.complete(projects);
                             } else {
@@ -107,7 +116,14 @@ public class ProjectsCollection implements Collection {
                                     String status = (String) document.getData().get(CollectionConstants.PROJECT_STATUS_FIELD.getValue());
                                     String id = document.getId();
 
-                                    Project newProject = new Project(id, counterIds, urlIds, name, status);
+                                    Object tempNotesIds = document.getData().get(CollectionConstants.PROJECT_NOTES_FIELD.getValue());
+                                    ArrayList<String> notesIds = new ArrayList<String>();;
+
+                                    if(tempNotesIds != null){
+                                        notesIds = (ArrayList<String>) tempNotesIds;
+                                    }
+
+                                    Project newProject = new Project(id, counterIds, urlIds, notesIds, name, status);
                                     projects.add(newProject);
                                 }
                                 cf.complete(projects);
@@ -323,6 +339,7 @@ public class ProjectsCollection implements Collection {
         projectMap.put("id", project.getId());
         projectMap.put(CollectionConstants.PROJECT_COUNTERS_FIELD.getValue(), project.getCounterIds());
         projectMap.put(CollectionConstants.PROJECT_URLS_FIELD.getValue(), project.getUrlIds());
+        projectMap.put(CollectionConstants.PROJECT_NOTES_FIELD.getValue(), project.getNotesIds());
         projectMap.put(CollectionConstants.PROJECT_NAME_FIELD.getValue(), project.getName());
         projectMap.put(CollectionConstants.PROJECT_STATUS_FIELD.getValue(), project.getStatus());
 

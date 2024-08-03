@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Project extends DatabaseObject implements Parcelable {
     private ArrayList<String> counterIds;
     private ArrayList<String> urlIds;
+    private ArrayList<String> notesIds;
     private String name;
     private String status;
 
@@ -17,15 +18,17 @@ public class Project extends DatabaseObject implements Parcelable {
         super(id);
         counterIds = new ArrayList<>();
         urlIds = new ArrayList<>();
+        notesIds = new ArrayList<>();
         this.name = name;
         this.status = status;
     }
 
-    public Project(String id, ArrayList<String> counterIds, ArrayList<String> urlIds, String name,
+    public Project(String id, ArrayList<String> counterIds, ArrayList<String> urlIds, ArrayList<String> notesIds, String name,
                    String status){
         this(id, name, status);
         this.counterIds = counterIds;
         this.urlIds = urlIds;
+        this.notesIds = notesIds;
     }
 
     protected Project(Parcel in) {
@@ -34,6 +37,7 @@ public class Project extends DatabaseObject implements Parcelable {
         this.urlIds = in.readArrayList(null);
         this.name = in.readString();
         this.status = in.readString();
+        this.notesIds = in.readArrayList(null);
     }
 
     public String getName(){
@@ -64,6 +68,8 @@ public class Project extends DatabaseObject implements Parcelable {
         return urlIds;
     }
 
+    public ArrayList<String> getNotesIds(){return notesIds;}
+
     public void removeUrl(String urlId){
         this.urlIds.remove(urlId);
     }
@@ -84,6 +90,7 @@ public class Project extends DatabaseObject implements Parcelable {
         dest.writeList(urlIds);
         dest.writeString(name);
         dest.writeString(status);
+        dest.writeList(notesIds);
     }
 
     public static final Creator<Project> CREATOR = new Creator<Project>() {
