@@ -8,7 +8,7 @@
     android:background="#FFFFFF">
 
     <ListView
-        android:id="@+id/notes_listview"
+        android:id="@+id/strings_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="0dp"

@@ -12,7 +12,8 @@ public enum ViewConstants {
     SELECTED_PROJECT("selectedProject"),
     SELECTED_COUNTER("selectedCounter"),
     SELECTED_URL("selectedUrl"),
-    PARENT_PROJECT("parentProject");
+    PARENT_PROJECT("parentProject"),
+    NOTES_FIELD("noteTitlews");
 
     private String value;
 

@@ -13,13 +13,19 @@ import androidx.fragment.app.Fragment;
 
 import com.example.stitcher.R;
 import com.example.stitcher.constants.Statuses;
+import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.array_adapters.NotesArrayAdapter;
 import com.example.stitcher.controllers.array_adapters.StatusesArrayAdapter;
+import com.example.stitcher.models.Notes;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class NotesFragment extends Fragment {
     private NotesArrayAdapter notesArrayAdapter;
     private ListView notesListView;
     private NotesFragmentHandler notesFragmentHandler;
+    private ArrayList<Notes> notes;
 
     interface NotesFragmentHandler {
         void noteChosen(int index);
@@ -30,6 +36,8 @@ public class NotesFragment extends Fragment {
                              Bundle savedInstanceState){
         super.onCreateView(inflater, container, savedInstanceState);
 
+        notes = this.getArguments().getParcelableArrayList(ViewConstants.NOTES_FIELD.getValue());
+
         return inflater.inflate(R.layout.fragment_notes,
                 container, false);
     }
@@ -37,7 +45,7 @@ public class NotesFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
         notesListView = getView().findViewById(R.id.strings_listview);
-        setAdapters(savedInstanceState);
+        setAdapters();
         setListeners();
     }
 
@@ -50,10 +58,12 @@ public class NotesFragment extends Fragment {
         }
     }
 
-    private void setAdapters(Bundle bundle){
+    private void setAdapters(){
         Context activity = this.getActivity();
 
-        notesArrayAdapter = new NotesArrayAdapter(activity, bundle.getStringArrayList("noteTitles"));
+        ArrayList<String> noteTitles = notes.stream().map(Notes::getTitle).collect(Collectors.toCollection(ArrayList::new));
+
+        notesArrayAdapter = new NotesArrayAdapter(activity, noteTitles);
         notesListView.setAdapter(notesArrayAdapter);
     }
 

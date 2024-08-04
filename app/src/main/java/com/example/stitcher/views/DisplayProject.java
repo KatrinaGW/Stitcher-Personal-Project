@@ -18,12 +18,15 @@ import androidx.fragment.app.Fragment;
 import com.example.stitcher.R;
 import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.CounterCollection;
+import com.example.stitcher.controllers.NotesCollection;
 import com.example.stitcher.controllers.UrlCollection;
 import com.example.stitcher.controllers.array_adapters.CounterArrayAdapter;
+import com.example.stitcher.controllers.array_adapters.NotesArrayAdapter;
 import com.example.stitcher.controllers.array_adapters.UrlsArrayAdapter;
 import com.example.stitcher.controllers.handlers.ProjectHandler;
 import com.example.stitcher.controllers.handlers.UrlHandler;
 import com.example.stitcher.models.Counter;
+import com.example.stitcher.models.Notes;
 import com.example.stitcher.models.Project;
 import com.example.stitcher.models.Url;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,26 +34,29 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class DisplayProject extends AppCompatActivity implements EnterTextFragment.EnterTextFragmentHandler,
-StatusesFragment.StatusesFragmentHandler{
+StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
     private UrlsArrayAdapter urlsArrayAdapter;
     private CounterArrayAdapter counterArrayAdapter;
     private ListView urlsListView;
     private ListView countersListView;
     private ArrayList<Counter> counters;
     private ArrayList<Url> urls;
+    private ArrayList<Notes> notes;
     private Project project;
     private Button backBtn;
     private Button newCounterBtn;
     private Button newUrlBtn;
     private Button statusBtn;
+    private Button notesBtn;
     private FloatingActionButton deleteUrlBtn;
     private TextView countersHeader;
     private TextView urlsHeader;
     private TextView titleTxtView;
     private boolean deletingURL;
-    private FrameLayout statusesFrame;
+    private FrameLayout fragmentFrame;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,6 +100,18 @@ StatusesFragment.StatusesFragmentHandler{
                     });
         }
 
+        if(project.getNotesIds().size()==0){
+            notes = new ArrayList<>();
+        }else{
+            NotesCollection.getInstance().getNotesWithIds(project.getNotesIds())
+                    .thenAccept(newNotes -> {
+                        runOnUiThread(() -> notes = newNotes);
+                    }).exceptionally(throwable -> {
+                        Log.w(TAG, throwable.getMessage());
+                        return null;
+                    });
+        }
+
         CounterCollection.getInstance().getCountersWithIds(project.getCounterIds())
                 .thenAccept(newCounters -> {
                     runOnUiThread(new Runnable() {
@@ -129,20 +147,39 @@ StatusesFragment.StatusesFragmentHandler{
             }
         });
 
+        notesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentVisible();
+
+                fragmentFrame.setVisibility(View.VISIBLE);
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(ViewConstants.NOTES_FIELD.getValue(), notes);
+                NotesFragment fragment = new NotesFragment();
+                fragment.setArguments(bundle);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.display_project_fragment_container, NotesFragment.class, null)
+                        .replace(R.id.display_project_fragment_container, fragment, null)
+                        .commit();
+            }
+        });
+
         statusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragmentVisible();
 
-                statusesFrame.setVisibility(View.VISIBLE);
+                fragmentFrame.setVisibility(View.VISIBLE);
 
                 Bundle bundle = new Bundle();
                 StatusesFragment fragment = new StatusesFragment();
                 fragment.setArguments(bundle);
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .add(R.id.choose_status_fragment_container, StatusesFragment.class, null)
-                        .replace(R.id.choose_status_fragment_container, fragment, null)
+                        .add(R.id.display_project_fragment_container, StatusesFragment.class, null)
+                        .replace(R.id.display_project_fragment_container, fragment, null)
                         .commit();
             }
         });
@@ -233,6 +270,7 @@ StatusesFragment.StatusesFragmentHandler{
         deleteUrlBtn.setVisibility(View.GONE);
         newUrlBtn.setEnabled(false);
         statusBtn.setEnabled(false);
+        notesBtn.setEnabled(false);
     }
 
     private void toggleDeletingUrl(){
@@ -243,6 +281,7 @@ StatusesFragment.StatusesFragmentHandler{
         newCounterBtn.setEnabled(!deletingURL);
         newUrlBtn.setEnabled(!deletingURL);
         statusBtn.setEnabled(!deletingURL);
+        notesBtn.setEnabled(!deletingURL);
     }
 
     private void init(){
@@ -255,12 +294,13 @@ StatusesFragment.StatusesFragmentHandler{
         countersHeader = findViewById(R.id.counters_header_text);
         urlsHeader = findViewById(R.id.urls_header_txt);
         statusBtn = findViewById(R.id.project_status_button);
+        notesBtn = findViewById(R.id.project_notes_button);
         titleTxtView = findViewById(R.id.title_txtView);
-        statusesFrame = findViewById(R.id.choose_status_frame);
+        fragmentFrame = findViewById(R.id.display_project_fragment_frame);
 
         statusBtn.setText(project.getStatus());
         titleTxtView.setText(project.getName());
-        statusesFrame.setVisibility(View.GONE);
+        fragmentFrame.setVisibility(View.GONE);
 
         setAdapters();
         setListeners();
@@ -275,9 +315,10 @@ StatusesFragment.StatusesFragmentHandler{
         deleteUrlBtn.setVisibility(View.VISIBLE);
         newUrlBtn.setEnabled(true);
         statusBtn.setEnabled(true);
+        notesBtn.setEnabled(true);
         countersHeader.setVisibility(View.VISIBLE);
         urlsHeader.setVisibility(View.VISIBLE);
-        statusesFrame.setVisibility(View.GONE);
+        fragmentFrame.setVisibility(View.GONE);
 
         ArrayList<Fragment> fragments = (ArrayList<Fragment>) getSupportFragmentManager().getFragments();
 
@@ -335,5 +376,10 @@ StatusesFragment.StatusesFragmentHandler{
                         return null;
                     }
                 });
+    }
+
+    @Override
+    public void noteChosen(int index) {
+        Log.i(TAG, "Note chosen, index: " + index);
     }
 }
