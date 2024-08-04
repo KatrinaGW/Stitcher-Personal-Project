@@ -48,10 +48,9 @@ public class NotesCollection implements Collection {
     private Notes documentSnapshotToNotes(DocumentSnapshot doc){
         String note = (String) doc.getData().get(CollectionConstants.NOTES_FIELD.getValue());
         String id = doc.getId();
+        String title = (String) doc.getData().get(CollectionConstants.NOTES_TITLE_FIELD.getValue());
 
-        Notes newNote = new Notes(id, note);
-
-        return newNote;
+        return new Notes(id, title, note);
     }
 
 
@@ -155,6 +154,7 @@ public class NotesCollection implements Collection {
         Map<String, Object> notesMap = new HashMap<>();
         notesMap.put("id", notes.getId());
         notesMap.put(CollectionConstants.NOTES_FIELD.getValue(), notes.getNotes());
+        notesMap.put(CollectionConstants.NOTES_TITLE_FIELD.getValue(), notes.getTitle());
 
         collection.document(notes.getId())
                 .set(notesMap)

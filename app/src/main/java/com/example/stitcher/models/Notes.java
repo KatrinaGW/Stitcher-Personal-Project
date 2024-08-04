@@ -4,11 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Notes extends DatabaseObject implements Parcelable {
-    private String notes;
+    private String note;
+    private String title;
 
-    public Notes(String id, String notes){
+    public Notes(String id, String title, String note){
         super(id);
-        this.notes = notes;
+        this.note = note;
     }
 
     public String getId(){
@@ -16,12 +17,15 @@ public class Notes extends DatabaseObject implements Parcelable {
     }
 
     public String getNotes(){
-        return notes;
+        return note;
     }
+
+    public String getTitle(){return title;}
 
     protected Notes(Parcel in) {
         super(in);
-        notes = in.readString();
+        note = in.readString();
+        title = in.readString();
     }
 
     public static final Creator<Notes> CREATOR = new Creator<Notes>() {
@@ -44,6 +48,7 @@ public class Notes extends DatabaseObject implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
-        dest.writeString(notes);
+        dest.writeString(note);
+        dest.writeString(title);
     }
 }

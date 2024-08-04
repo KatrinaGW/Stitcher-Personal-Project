@@ -56,6 +56,8 @@ public class Project extends DatabaseObject implements Parcelable {
         urlIds.add(id);
     }
 
+    public void addNoteId(String id){notesIds.add(id);}
+
     public String getId(){
         return id;
     }
@@ -72,6 +74,10 @@ public class Project extends DatabaseObject implements Parcelable {
 
     public void removeUrl(String urlId){
         this.urlIds.remove(urlId);
+    }
+
+    public void removeNote(String noteId){
+        this.notesIds.remove(noteId);
     }
 
     public void removeCounter(String counterId){

@@ -14,7 +14,8 @@ public enum CollectionConstants {
     COUNTER_NAME_FIELD("name"),
     PROJECT_NOTES_FIELD("notes"),
     NOTES_COLLECTION("Notes"),
-    NOTES_FIELD("note");
+    NOTES_FIELD("note"),
+    NOTES_TITLE_FIELD("title");
 
     private String value;
 
