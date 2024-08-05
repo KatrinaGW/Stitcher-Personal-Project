@@ -127,21 +127,44 @@ public class NotesCollection implements Collection {
 
         DocumentReference documentReference = collection.document(note.getId());
 
-        CompletableFuture.runAsync(() ->
+        ArrayList<String> errors = new ArrayList<>();
+
+        CompletableFuture noteBody = CompletableFuture.supplyAsync(() ->
                 documentReference.update(CollectionConstants.NOTES_FIELD.getValue(), note.getNotes())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                cf.complete(true);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w(TAG, "ERROR", e);
-                                cf.completeExceptionally(e);
+                                errors.add(e.getMessage());
                             }
                         }));
+
+        CompletableFuture noteTitle = CompletableFuture.supplyAsync(() ->
+                documentReference.update(CollectionConstants.NOTES_TITLE_FIELD.getValue(), note.getTitle())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "ERROR", e);
+                                errors.add(e.getMessage());
+                            }
+                        }));
+
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(noteBody, noteTitle);
+
+        allFutures.thenRun(() -> {
+            System.out.println("Finished");
+            cf.complete(errors.size()==0);
+        });
 
         return cf;
     }

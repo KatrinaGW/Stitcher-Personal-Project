@@ -9,6 +9,7 @@ import com.example.stitcher.controllers.ProjectsCollection;
 import com.example.stitcher.models.Notes;
 import com.example.stitcher.models.Project;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -60,7 +61,8 @@ public class NotesHandler {
         return cf;
     }
 
-    public static CompletableFuture<Boolean> createNewNote(Notes note, Project parentProject){
+    public static CompletableFuture<Boolean> createNewNote(String noteBody, String noteTitle, Project parentProject){
+        Notes note = new Notes(UUID.randomUUID().toString(), noteTitle, noteBody);
         parentProject.addNoteId(note.getId());
         ProjectHandler.clearStatusList(parentProject.getStatus());
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
@@ -110,7 +112,9 @@ public class NotesHandler {
 
     }
 
-    public static CompletableFuture<Boolean> saveNote(Notes note){
+    public static CompletableFuture<Boolean> saveNote(Notes note, String newBody, String newTitle){
+        note.setBody(newBody);
+        note.setTitle(newTitle);
         CompletableFuture<Boolean> cf = new CompletableFuture<>();
 
         NotesCollection.getInstance().updateRecord(note.getId(), note)

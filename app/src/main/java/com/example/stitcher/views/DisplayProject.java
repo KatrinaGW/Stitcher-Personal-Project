@@ -23,6 +23,7 @@ import com.example.stitcher.controllers.UrlCollection;
 import com.example.stitcher.controllers.array_adapters.CounterArrayAdapter;
 import com.example.stitcher.controllers.array_adapters.NotesArrayAdapter;
 import com.example.stitcher.controllers.array_adapters.UrlsArrayAdapter;
+import com.example.stitcher.controllers.handlers.NotesHandler;
 import com.example.stitcher.controllers.handlers.ProjectHandler;
 import com.example.stitcher.controllers.handlers.UrlHandler;
 import com.example.stitcher.models.Counter;
@@ -156,6 +157,7 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
 
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(ViewConstants.NOTES_FIELD.getValue(), notes);
+                bundle.putParcelable(ViewConstants.PARENT_PROJECT.getValue(), project);
                 NotesFragment fragment = new NotesFragment();
                 fragment.setArguments(bundle);
                 getSupportFragmentManager()
@@ -379,7 +381,57 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
     }
 
     @Override
-    public void noteChosen(int index) {
-        Log.i(TAG, "Note chosen, index: " + index);
+    public void closed() {
+        dismissFragment();
+    }
+
+    @Override
+    public void noteCreated(String noteTitle, String noteBody) {
+        NotesHandler.createNewNote(noteBody, noteTitle, project)
+                .thenAccept(success ->
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (success){
+                                dismissFragment();
+                            }else{
+                                Log.e(TAG, "Something went wrong when creating the new note");
+                            }
+                        }
+                    })
+                )
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+
+                        return null;
+                    }
+                });
+    }
+
+    @Override
+    public void noteUpdated(Notes note, String newBody, String newTitle) {
+        NotesHandler.saveNote(note, newBody, newTitle)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (success){
+                                    dismissFragment();
+                                }else{
+                                    Log.e(TAG, "Something went wrong when updating the note");
+                                }
+                            }
+                        })
+                )
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+
+                        return null;
+                    }
+                });
     }
 }

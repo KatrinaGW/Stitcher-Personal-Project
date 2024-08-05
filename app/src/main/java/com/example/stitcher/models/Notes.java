@@ -10,6 +10,7 @@ public class Notes extends DatabaseObject implements Parcelable {
     public Notes(String id, String title, String note){
         super(id);
         this.note = note;
+        this.title = title;
     }
 
     public String getId(){
@@ -26,6 +27,14 @@ public class Notes extends DatabaseObject implements Parcelable {
         super(in);
         note = in.readString();
         title = in.readString();
+    }
+
+    public void setBody(String newBody){
+        this.note=newBody;
+    }
+
+    public void setTitle(String newTitle){
+        this.title = newTitle;
     }
 
     public static final Creator<Notes> CREATOR = new Creator<Notes>() {
