@@ -218,7 +218,7 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         }
 
         if(!countersFragmentVisible && chosenCounter == null){
-            countersBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circled_down_arrow));
+            countersBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.tallies));
 
         }
     }

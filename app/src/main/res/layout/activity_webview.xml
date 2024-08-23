@@ -65,7 +65,7 @@
             android:focusable="true"
             app:backgroundTint="#743ED5"
             app:fabSize="mini"
-            app:srcCompat="@android:drawable/ic_menu_more" />
+            app:srcCompat="@drawable/tallies" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/counter_webview_save"
