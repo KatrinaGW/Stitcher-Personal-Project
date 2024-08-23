@@ -61,11 +61,11 @@ public class NotesHandler {
         return cf;
     }
 
-    public static CompletableFuture<Boolean> createNewNote(String noteBody, String noteTitle, Project parentProject){
+    public static CompletableFuture<Notes> createNewNote(String noteBody, String noteTitle, Project parentProject){
         Notes note = new Notes(UUID.randomUUID().toString(), noteTitle, noteBody);
         parentProject.addNoteId(note.getId());
         ProjectHandler.clearStatusList(parentProject.getStatus());
-        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+        CompletableFuture<Notes> cf = new CompletableFuture<>();
         ArrayList<Throwable> errors = new ArrayList<>();
 
         CompletableFuture futureNote = CompletableFuture.supplyAsync(() ->
@@ -104,7 +104,7 @@ public class NotesHandler {
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureNote, futureProjectUpdate);
 
         allFutures.thenRun(() -> {
-            cf.complete(errors.size()==0);
+            cf.complete(note);
         });
 
 
@@ -112,15 +112,15 @@ public class NotesHandler {
 
     }
 
-    public static CompletableFuture<Boolean> saveNote(Notes note, String newBody, String newTitle){
+    public static CompletableFuture<Notes> saveNote(Notes note, String newBody, String newTitle){
         note.setBody(newBody);
         note.setTitle(newTitle);
-        CompletableFuture<Boolean> cf = new CompletableFuture<>();
+        CompletableFuture<Notes> cf = new CompletableFuture<>();
 
         NotesCollection.getInstance().updateRecord(note.getId(), note)
                 .thenAccept(success -> {
                     if(success){
-                        cf.complete(true);
+                        cf.complete(note);
                     }else{
                         cf.completeExceptionally(
                                 new Exception("Something went wrong when saving the note state")

@@ -37,6 +37,7 @@ public class NotesFragment extends Fragment {
     private Notes chosenNote = null;
     private Button closeBtn;
     private EditText noteTitleTxt;
+    private ArrayList<View> dividers = new ArrayList<>();
 
     interface NotesFragmentHandler {
         void closed();
@@ -62,6 +63,8 @@ public class NotesFragment extends Fragment {
         noteTextArea = getView().findViewById(R.id.note_text_area);
         closeBtn = getView().findViewById(R.id.note_fragment_close_btn);
         noteTitleTxt = getView().findViewById(R.id.note_title_txt);
+        dividers.add(getView().findViewById(R.id.divider_1));
+        dividers.add(getView().findViewById(R.id.divider_2));
         setAdapters();
         setListeners();
 
@@ -132,6 +135,9 @@ public class NotesFragment extends Fragment {
         noteTextArea.setEnabled(enteringNote);
         noteTitleTxt.setVisibility(enteringNote ? View.VISIBLE : View.GONE);
         noteTitleTxt.setEnabled(enteringNote);
+
+        dividers.get(0).setVisibility(enteringNote ? View.VISIBLE : View.GONE);
+        dividers.get(1).setVisibility(enteringNote ? View.VISIBLE : View.GONE);
 
         if(enteringNote && chosenNote != null){
             noteTextArea.setText(chosenNote.getNotes());

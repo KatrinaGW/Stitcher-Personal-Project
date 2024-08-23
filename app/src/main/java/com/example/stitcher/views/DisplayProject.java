@@ -387,16 +387,14 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
 
     @Override
     public void noteCreated(String noteTitle, String noteBody) {
+
         NotesHandler.createNewNote(noteBody, noteTitle, project)
-                .thenAccept(success ->
+                .thenAccept(note ->
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (success){
-                                dismissFragment();
-                            }else{
-                                Log.e(TAG, "Something went wrong when creating the new note");
-                            }
+                            dismissFragment();
+                            notes.add(note);
                         }
                     })
                 )
@@ -417,11 +415,7 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (success){
-                                    dismissFragment();
-                                }else{
-                                    Log.e(TAG, "Something went wrong when updating the note");
-                                }
+                                dismissFragment();
                             }
                         })
                 )
