@@ -9,6 +9,7 @@
     android:background="@drawable/white_rounded_background">
 
     <LinearLayout
+        android:id="@+id/notes_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="2"
@@ -32,6 +33,15 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="48dp"
             android:text="Close" />
+
+        <Button
+            android:id="@+id/note_delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="48dp"
+            android:text="Delete" />
     </LinearLayout>
 
     <ListView

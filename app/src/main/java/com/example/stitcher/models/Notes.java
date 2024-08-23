@@ -3,6 +3,9 @@ package com.example.stitcher.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
 public class Notes extends DatabaseObject implements Parcelable {
     private String note;
     private String title;
@@ -11,6 +14,33 @@ public class Notes extends DatabaseObject implements Parcelable {
         super(id);
         this.note = note;
         this.title = title;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o==this){
+            return true;
+        }
+
+        if(!(o instanceof Notes)){
+            return false;
+        }
+
+        Notes otherNote = (Notes) o;
+
+        return Objects.equals(otherNote.getId(), this.id);
+    }
+
+    @Override
+    public final int hashCode() {
+        byte[] bytes = this.id.getBytes(StandardCharsets.US_ASCII);
+        int total = 0;
+
+        for(byte b : bytes){
+            total+=(int) b;
+        }
+
+        return total;
     }
 
     public String getId(){

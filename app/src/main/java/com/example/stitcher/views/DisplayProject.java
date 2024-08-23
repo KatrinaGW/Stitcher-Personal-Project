@@ -428,4 +428,31 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
                     }
                 });
     }
+
+    @Override
+    public void noteDeleted(Notes note) {
+        NotesHandler.deleteNote(note, project)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(success){
+                                    int index = notes.indexOf(note);
+                                    notes.remove(index);
+                                    dismissFragment();
+                                }else{
+                                    Log.e(TAG, "Something went wrong when deleting the note");
+                                }
+
+                            }
+                        }))
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+
+                        return null;
+                    }
+                });
+    }
 }
