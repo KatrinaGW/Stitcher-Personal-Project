@@ -58,6 +58,8 @@ public class NotesFragment extends Fragment {
 
         notes = this.getArguments().getParcelableArrayList(ViewConstants.NOTES_FIELD.getValue());
 
+        System.out.println(notes);
+
         return inflater.inflate(R.layout.fragment_notes,
                 container, false);
     }
