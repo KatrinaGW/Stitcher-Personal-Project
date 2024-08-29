@@ -20,6 +20,7 @@ import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.CounterCollection;
 import com.example.stitcher.controllers.NotesCollection;
 import com.example.stitcher.controllers.handlers.CounterHandler;
+import com.example.stitcher.controllers.handlers.NotesHandler;
 import com.example.stitcher.models.Counter;
 import com.example.stitcher.models.Notes;
 import com.example.stitcher.models.Project;
@@ -81,6 +82,11 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
                                 @Override
                                 public void run() {
                                     counters = parentCounters;
+                                    if(counters.isEmpty()){
+                                        countersBtn.setVisibility(View.GONE);
+                                    }else{
+                                        countersBtn.setVisibility(View.VISIBLE);
+                                    }
                                 }
                             }))
                     .exceptionally(new Function<Throwable, Void>() {
@@ -270,6 +276,10 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
             countersBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.tallies));
 
         }
+
+        if(counters == null || counters.isEmpty()){
+            countersBtn.setVisibility(View.GONE);
+        }
     }
 
     private void handleCountChange(int changeValue){
@@ -289,10 +299,7 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
             notesFragmentVisible=!notesFragmentVisible;
         }
 
-        System.out.println("notesFragmentVisible is " + notesFragmentVisible);
-
         boolean fragmentShowing = countersFragmentVisible || notesFragmentVisible;
-
 
         if(countersFragmentVisible){
             chosenCounter = null;
@@ -307,6 +314,8 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         saveBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         editBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         handleCountersBtnImage();
+
+        countersBtn.setVisibility(counters.isEmpty() ? View.GONE : View.VISIBLE);
 
         if(counterValueTxt.getVisibility() == View.VISIBLE){
             handleCounterValue();
@@ -335,16 +344,71 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
 
     @Override
     public void noteCreated(String noteTitle, String noteBody) {
+        NotesHandler.createNewNote(noteBody, noteTitle, parentProject)
+                .thenAccept(note ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                toggleFragmentVisibility(false, true);
+                                notes.add(note);
+                            }
+                        })
+                )
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
 
+                        return null;
+                    }
+                });
     }
 
     @Override
     public void noteUpdated(Notes note, String newBody, String newTitle) {
+        NotesHandler.saveNote(note, newBody, newTitle)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                toggleFragmentVisibility(false, true);
+                            }
+                        })
+                )
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
 
+                        return null;
+                    }
+                });
     }
 
     @Override
     public void noteDeleted(Notes note) {
+        NotesHandler.deleteNote(note, parentProject)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(success){
+                                    int index = notes.indexOf(note);
+                                    notes.remove(index);
+                                    toggleFragmentVisibility(false, true);
+                                }else{
+                                    Log.e(TAG, "Something went wrong when deleting the note");
+                                }
 
+                            }
+                        }))
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+
+                        return null;
+                    }
+                });
     }
 }
