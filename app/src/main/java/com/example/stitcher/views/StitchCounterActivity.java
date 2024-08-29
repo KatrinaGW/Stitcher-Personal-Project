@@ -4,19 +4,25 @@ import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.example.stitcher.R;
 import com.example.stitcher.constants.ViewConstants;
@@ -244,9 +250,7 @@ public class StitchCounterActivity extends AppCompatActivity implements NotesFra
 
     private void toggleNotesFragmentVisible(){
         notesFragmentVisible = !notesFragmentVisible;
-
-        addBtn.setEnabled(!notesFragmentVisible);
-        subtractBtn.setEnabled(!notesFragmentVisible);
+        
         goalCounterValue.setEnabled(!notesFragmentVisible);
         counterNameValue.setEnabled(!notesFragmentVisible);
         deleteBtn.setEnabled(!notesFragmentVisible);
@@ -256,6 +260,20 @@ public class StitchCounterActivity extends AppCompatActivity implements NotesFra
         notesBtn.setEnabled(!notesFragmentVisible);
 
         frame.setVisibility(notesFragmentVisible ? View.VISIBLE : View.GONE);
+
+        Resources r = this.getApplicationContext().getResources();
+        int px = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                65,
+                r.getDisplayMetrics()
+        );
+
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) countText.getLayoutParams();
+        params.setMargins(0, notesFragmentVisible ? px : 0, 0, 0);
+
+        countText.setLayoutParams(params);
+
+
     }
 
     private void findElements(){
