@@ -93,4 +93,31 @@
         android:inputType="text|textMultiLine"
         />
 
+    <LinearLayout
+        android:id="@+id/notes_delete_confirmation_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:weightSum="2"
+        android:background="@drawable/white_rounded_background"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/confirm_delete_note_btn"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm_delete" />
+
+        <Button
+            android:id="@+id/cancel_delete_note_btn"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_delete" />
+
+    </LinearLayout>
+
 </FrameLayout>
