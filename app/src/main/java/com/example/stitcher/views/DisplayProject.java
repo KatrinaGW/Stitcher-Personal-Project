@@ -143,6 +143,7 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
             public void onClick(View v) {
                 Intent counterIntent = new Intent(DisplayProject.this, StitchCounterActivity.class);
                 counterIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), project);
+                counterIntent.putParcelableArrayListExtra(ViewConstants.NOTES_FIELD.getValue(), notes);
 
                 startActivity(counterIntent);
             }
@@ -250,6 +251,7 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
                 Intent counterIntent = new Intent(DisplayProject.this, StitchCounterActivity.class);
                 counterIntent.putExtra(ViewConstants.SELECTED_COUNTER.getValue(), clickedCounter);
                 counterIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), project);
+                counterIntent.putParcelableArrayListExtra(ViewConstants.NOTES_FIELD.getValue(), notes);
 
                 startActivity(counterIntent);
             }
