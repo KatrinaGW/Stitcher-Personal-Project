@@ -8,7 +8,7 @@ I've tried existing apps, but they still aren't exactly what I wanted. So, I am 
 
 ## Current Features
 - Lists of Projects
-  - Each project has stitch counters and urls
+  - Each project has stitch counters, urls, and notes
   - Each project has a status, and the projects are sorted by status
 - Stitch counters
   - Stitch counters have names, a current count, and a goal count
@@ -16,7 +16,13 @@ I've tried existing apps, but they still aren't exactly what I wanted. So, I am 
   - Urls can be opened in app
   - When opened in app, a stitch counter can be overlayed on the website so that users don't have to flip between the counter and the project
   - When a Stitch Counter is open on top of a URL, the Stitch Counter can be incremented or decremented with a tap and it will turn green once the goal count has been reached
+- Notes
+  - Notes can be opened at the same time as a url or a stitch counter
+  - Each project can have an unlimited number of notes
 
  ## TODO Features
- - Add the ability to keep notes for each project
  - Improve the UI
+ - Gives URLs names
+ - Allow for custom statuses
+ - Make statuses a slider
+ - Add images to projects
