@@ -25,4 +25,6 @@
     <string name="delete_project">Delete Project</string>
     <string name="edit_project_name">Edit Project Name</string>
     <string name="see_counters">See Counters</string>
+    <string name="confirm_delete">Confirm Delete</string>
+    <string name="cancel_delete">Cancel Delete</string>
 </resources>

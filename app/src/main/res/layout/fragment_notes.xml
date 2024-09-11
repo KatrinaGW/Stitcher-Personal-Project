@@ -6,13 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="#FFFFFFFF">
+    android:background="@drawable/white_rounded_background">
 
     <LinearLayout
+        android:id="@+id/notes_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="2"
-        android:background="#FFFFFF"
+        android:background="@drawable/white_rounded_background"
         android:orientation="horizontal">
 
         <Button
@@ -32,6 +33,15 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="48dp"
             android:text="Close" />
+
+        <Button
+            android:id="@+id/note_delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="48dp"
+            android:text="Delete" />
     </LinearLayout>
 
     <ListView
@@ -40,7 +50,7 @@
         android:layout_marginTop="48dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#FFFFFFFF"
+        android:background="@drawable/white_rounded_background"
         android:dividerHeight="1dp">
     </ListView>
 
@@ -74,13 +84,40 @@
         android:id="@+id/note_text_area"
         android:layout_width="match_parent"
         android:layout_marginTop="96dp"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
         android:hint="Note Body"
-        android:maxHeight="300dp"
+        android:maxHeight="250dp"
         android:scrollbars="vertical"
-        android:background="#817794"
+        android:background="@drawable/white_rounded_background"
         android:gravity="top"
         android:inputType="text|textMultiLine"
         />
+
+    <LinearLayout
+        android:id="@+id/notes_delete_confirmation_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:weightSum="2"
+        android:background="@drawable/white_rounded_background"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/confirm_delete_note_btn"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm_delete" />
+
+        <Button
+            android:id="@+id/cancel_delete_note_btn"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_delete" />
+
+    </LinearLayout>
 
 </FrameLayout>

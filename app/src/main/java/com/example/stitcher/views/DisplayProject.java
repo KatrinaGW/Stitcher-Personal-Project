@@ -143,6 +143,7 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
             public void onClick(View v) {
                 Intent counterIntent = new Intent(DisplayProject.this, StitchCounterActivity.class);
                 counterIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), project);
+                counterIntent.putParcelableArrayListExtra(ViewConstants.NOTES_FIELD.getValue(), notes);
 
                 startActivity(counterIntent);
             }
@@ -213,6 +214,7 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
                     Intent urlIntent = new Intent(DisplayProject.this, UrlWebviewActivity.class);
                     urlIntent.putExtra(ViewConstants.SELECTED_URL.getValue(), clickedUrl);
                     urlIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), project);
+                    urlIntent.putParcelableArrayListExtra(ViewConstants.NOTES_FIELD.getValue(), notes);
                     urlIntent.putParcelableArrayListExtra(ViewConstants.FRAGMENT_PROJECT_COUNTERS.getValue(), counters);
 
                     startActivity(urlIntent);
@@ -249,6 +251,7 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
                 Intent counterIntent = new Intent(DisplayProject.this, StitchCounterActivity.class);
                 counterIntent.putExtra(ViewConstants.SELECTED_COUNTER.getValue(), clickedCounter);
                 counterIntent.putExtra(ViewConstants.PARENT_PROJECT.getValue(), project);
+                counterIntent.putParcelableArrayListExtra(ViewConstants.NOTES_FIELD.getValue(), notes);
 
                 startActivity(counterIntent);
             }
@@ -419,6 +422,33 @@ StatusesFragment.StatusesFragmentHandler, NotesFragment.NotesFragmentHandler {
                             }
                         })
                 )
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+
+                        return null;
+                    }
+                });
+    }
+
+    @Override
+    public void noteDeleted(Notes note) {
+        NotesHandler.deleteNote(note, project)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(success){
+                                    int index = notes.indexOf(note);
+                                    notes.remove(index);
+                                    dismissFragment();
+                                }else{
+                                    Log.e(TAG, "Something went wrong when deleting the note");
+                                }
+
+                            }
+                        }))
                 .exceptionally(new Function<Throwable, Void>() {
                     @Override
                     public Void apply(Throwable throwable) {

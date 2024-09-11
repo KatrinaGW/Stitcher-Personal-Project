@@ -8,22 +8,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.stitcher.R;
-import com.example.stitcher.constants.Statuses;
 import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.array_adapters.NotesArrayAdapter;
-import com.example.stitcher.controllers.array_adapters.StatusesArrayAdapter;
-import com.example.stitcher.controllers.handlers.NotesHandler;
 import com.example.stitcher.models.Notes;
 
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class NotesFragment extends Fragment {
@@ -36,13 +32,19 @@ public class NotesFragment extends Fragment {
     private EditText noteTextArea;
     private Notes chosenNote = null;
     private Button closeBtn;
+    private Button deleteBtn;
     private EditText noteTitleTxt;
     private ArrayList<View> dividers = new ArrayList<>();
+    private LinearLayout buttonsLayout;
+    private LinearLayout deleteConfirmationLayout;
+    private Button confirmDeleteBtn;
+    private Button cancelDeleteBtn;
 
     interface NotesFragmentHandler {
         void closed();
         void noteCreated(String noteTitle, String noteBody);
         void noteUpdated(Notes note, String newBody, String newTitle);
+        void noteDeleted(Notes note);
     }
 
     @Override
@@ -51,6 +53,8 @@ public class NotesFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         notes = this.getArguments().getParcelableArrayList(ViewConstants.NOTES_FIELD.getValue());
+
+        System.out.println(notes);
 
         return inflater.inflate(R.layout.fragment_notes,
                 container, false);
@@ -62,13 +66,27 @@ public class NotesFragment extends Fragment {
         noteFragmentBtn = getView().findViewById(R.id.note_fragment_btn);
         noteTextArea = getView().findViewById(R.id.note_text_area);
         closeBtn = getView().findViewById(R.id.note_fragment_close_btn);
+        deleteBtn = getView().findViewById(R.id.note_delete_btn);
+        confirmDeleteBtn = getView().findViewById(R.id.confirm_delete_note_btn);
+        cancelDeleteBtn = getView().findViewById(R.id.cancel_delete_note_btn);
+        buttonsLayout = getView().findViewById(R.id.notes_buttons_layout);
+        deleteConfirmationLayout = getView().findViewById(R.id.notes_delete_confirmation_layout);
         noteTitleTxt = getView().findViewById(R.id.note_title_txt);
         dividers.add(getView().findViewById(R.id.divider_1));
         dividers.add(getView().findViewById(R.id.divider_2));
         setAdapters();
         setListeners();
 
+        deleteConfirmationLayout.setVisibility(View.GONE);
+
         setEnteringNote(enteringNote);
+    }
+
+    private void toggleDeleteBtns(boolean show){
+        deleteConfirmationLayout.setVisibility(show ? View.VISIBLE : View.GONE);
+        buttonsLayout.setVisibility(show ? View.GONE : View.VISIBLE);
+        noteTextArea.setEnabled(!show);
+        noteTitleTxt.setEnabled(!show);
     }
 
     @Override
@@ -125,6 +143,27 @@ public class NotesFragment extends Fragment {
                 notesFragmentHandler.closed();
             }
         });
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleDeleteBtns(true);
+            }
+        });
+
+        confirmDeleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notesFragmentHandler.noteDeleted(chosenNote);
+            }
+        });
+
+        cancelDeleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleDeleteBtns(false);
+            }
+        });
     }
 
     private void setEnteringNote(boolean enteringNote){
@@ -135,6 +174,8 @@ public class NotesFragment extends Fragment {
         noteTextArea.setEnabled(enteringNote);
         noteTitleTxt.setVisibility(enteringNote ? View.VISIBLE : View.GONE);
         noteTitleTxt.setEnabled(enteringNote);
+
+        deleteBtn.setVisibility(enteringNote? View.VISIBLE : View.GONE);
 
         dividers.get(0).setVisibility(enteringNote ? View.VISIBLE : View.GONE);
         dividers.get(1).setVisibility(enteringNote ? View.VISIBLE : View.GONE);

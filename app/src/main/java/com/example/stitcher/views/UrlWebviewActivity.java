@@ -18,8 +18,11 @@ import androidx.core.content.ContextCompat;
 import com.example.stitcher.R;
 import com.example.stitcher.constants.ViewConstants;
 import com.example.stitcher.controllers.CounterCollection;
+import com.example.stitcher.controllers.NotesCollection;
 import com.example.stitcher.controllers.handlers.CounterHandler;
+import com.example.stitcher.controllers.handlers.NotesHandler;
 import com.example.stitcher.models.Counter;
+import com.example.stitcher.models.Notes;
 import com.example.stitcher.models.Project;
 import com.example.stitcher.models.Url;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -27,22 +30,25 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.function.Function;
 
-public class UrlWebviewActivity extends AppCompatActivity implements ProjectCountersFragment.ProjectCountersFragmentHandler {
+public class UrlWebviewActivity extends AppCompatActivity implements ProjectCountersFragment.ProjectCountersFragmentHandler, NotesFragment.NotesFragmentHandler {
     WebView webview;
     Url url;
     Project parentProject;
     Button backBtn;
     ArrayList<Counter> counters;
+    ArrayList<Notes> notes;
     FloatingActionButton countersBtn;
     FloatingActionButton addToCounterBtn;
     FloatingActionButton subtractCounterBtn;
     FloatingActionButton saveBtn;
     FloatingActionButton editBtn;
     FloatingActionButton addCounterBtn;
+    FloatingActionButton viewNotesBtn;
     TextView counterValueTxt;
     TextView savedTxt;
     FrameLayout countersFrame;
     private boolean countersFragmentVisible;
+    private boolean notesFragmentVisible;
     private Counter chosenCounter;
 
     @Override
@@ -55,8 +61,9 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         url = intent.getParcelableExtra(ViewConstants.SELECTED_URL.getValue());
         parentProject = intent.getParcelableExtra(ViewConstants.PARENT_PROJECT.getValue());
         counters = intent.getParcelableArrayListExtra(ViewConstants.FRAGMENT_PROJECT_COUNTERS.getValue());
+        notes = intent.getParcelableArrayListExtra(ViewConstants.NOTES_FIELD.getValue());
 
-        checkCountersOrGet();
+        checkListsOrGet();
 
         setViewComponents();
         setListeners();
@@ -67,7 +74,7 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         webview.loadUrl(url.getUrl());
     }
 
-    private void checkCountersOrGet(){
+    private void checkListsOrGet(){
         if(counters == null){
             CounterCollection.getInstance().getCountersWithIds(parentProject.getCounterIds())
                     .thenAccept(parentCounters ->
@@ -75,6 +82,29 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
                                 @Override
                                 public void run() {
                                     counters = parentCounters;
+                                    if(counters.isEmpty()){
+                                        countersBtn.setVisibility(View.GONE);
+                                    }else{
+                                        countersBtn.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            }))
+                    .exceptionally(new Function<Throwable, Void>() {
+                        @Override
+                        public Void apply(Throwable throwable) {
+                            Log.e(TAG, throwable.getMessage(), throwable);
+                            return null;
+                        }
+                    });
+        }
+
+        if(notes == null){
+            NotesCollection.getInstance().getNotesWithIds(parentProject.getNotesIds())
+                    .thenAccept(parentNotes ->
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    notes = parentNotes;
                                 }
                             }))
                     .exceptionally(new Function<Throwable, Void>() {
@@ -95,7 +125,9 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         savedTxt.setVisibility(View.GONE);
         countersFrame.setVisibility(View.GONE);
         countersFragmentVisible = false;
+        notesFragmentVisible = false;
         addCounterBtn = findViewById(R.id.add_counter_webview_fab);
+        viewNotesBtn = findViewById(R.id.webview_notes_btn);
         saveBtn = findViewById(R.id.counter_webview_save);
         addToCounterBtn = findViewById(R.id.add_to_counter_fab);
         subtractCounterBtn = findViewById(R.id.counters_subtract_fab);
@@ -120,10 +152,33 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
             }
         });
 
+        viewNotesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleFragmentVisibility(false, true);
+
+                if(notesFragmentVisible){
+                    Bundle bundle = new Bundle();
+                    NotesFragment fragment = new NotesFragment();
+
+                    bundle.putParcelableArrayList(ViewConstants.NOTES_FIELD.getValue(), notes);
+                    bundle.putParcelable(ViewConstants.PARENT_PROJECT.getValue(), parentProject);
+
+                    fragment.setArguments(bundle);
+
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.choose_counter_fragment_container, NotesFragment.class, null)
+                            .replace(R.id.choose_counter_fragment_container, fragment, null)
+                            .commit();
+                }
+            }
+        });
+
         countersBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleFragmentVisibility();
+                toggleFragmentVisibility(true, false);
 
                 if(countersFragmentVisible){
                     Bundle bundle = new Bundle();
@@ -218,8 +273,12 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         }
 
         if(!countersFragmentVisible && chosenCounter == null){
-            countersBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circled_down_arrow));
+            countersBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.tallies));
 
+        }
+
+        if(counters == null || counters.isEmpty()){
+            countersBtn.setVisibility(View.GONE);
         }
     }
 
@@ -231,21 +290,32 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
         }
     }
 
-    private void toggleFragmentVisibility(){
-        countersFragmentVisible = !countersFragmentVisible;
+    private void toggleFragmentVisibility(boolean toggleCounters, boolean toggleNotes){
+        if(toggleCounters){
+            countersFragmentVisible = !countersFragmentVisible;
+        }
+
+        if(toggleNotes){
+            notesFragmentVisible=!notesFragmentVisible;
+        }
+
+        boolean fragmentShowing = countersFragmentVisible || notesFragmentVisible;
 
         if(countersFragmentVisible){
             chosenCounter = null;
         }
 
-        countersFrame.setVisibility(countersFragmentVisible ? View.VISIBLE : View.GONE);
+        countersFrame.setVisibility(fragmentShowing ? View.VISIBLE : View.GONE);
         addToCounterBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         subtractCounterBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         counterValueTxt.setVisibility(chosenCounter == null  ? View.GONE : View.VISIBLE);
-        addCounterBtn.setEnabled(chosenCounter == null && !countersFragmentVisible);
+        addCounterBtn.setEnabled(chosenCounter == null && !fragmentShowing);
+        viewNotesBtn.setEnabled(chosenCounter==null && !fragmentShowing);
         saveBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         editBtn.setVisibility(chosenCounter == null ? View.GONE : View.VISIBLE);
         handleCountersBtnImage();
+
+        countersBtn.setVisibility(counters.isEmpty() ? View.GONE : View.VISIBLE);
 
         if(counterValueTxt.getVisibility() == View.VISIBLE){
             handleCounterValue();
@@ -262,8 +332,83 @@ public class UrlWebviewActivity extends AppCompatActivity implements ProjectCoun
     @Override
     public void counterChosen(Counter counter) {
         chosenCounter = counter;
-        toggleFragmentVisibility();
+        toggleFragmentVisibility(true, false);
 
 
+    }
+
+    @Override
+    public void closed() {
+        toggleFragmentVisibility(false, true);
+    }
+
+    @Override
+    public void noteCreated(String noteTitle, String noteBody) {
+        NotesHandler.createNewNote(noteBody, noteTitle, parentProject)
+                .thenAccept(note ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                toggleFragmentVisibility(false, true);
+                                notes.add(note);
+                            }
+                        })
+                )
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+
+                        return null;
+                    }
+                });
+    }
+
+    @Override
+    public void noteUpdated(Notes note, String newBody, String newTitle) {
+        NotesHandler.saveNote(note, newBody, newTitle)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                toggleFragmentVisibility(false, true);
+                            }
+                        })
+                )
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+
+                        return null;
+                    }
+                });
+    }
+
+    @Override
+    public void noteDeleted(Notes note) {
+        NotesHandler.deleteNote(note, parentProject)
+                .thenAccept(success ->
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(success){
+                                    int index = notes.indexOf(note);
+                                    notes.remove(index);
+                                    toggleFragmentVisibility(false, true);
+                                }else{
+                                    Log.e(TAG, "Something went wrong when deleting the note");
+                                }
+
+                            }
+                        }))
+                .exceptionally(new Function<Throwable, Void>() {
+                    @Override
+                    public Void apply(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+
+                        return null;
+                    }
+                });
     }
 }
